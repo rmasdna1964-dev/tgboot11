@@ -26,10 +26,6 @@
             font-weight: bold;
             border-radius: 12px;
             cursor: pointer;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-        }
-        .btn:active {
-            transform: scale(0.98);
         }
     </style>
 </head>
@@ -44,7 +40,6 @@
 
         async function buySpin(starsCount) {
             try {
-                // Запрос к созданному Vercel Serverless API
                 const response = await fetch('/api/create-invoice', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -53,20 +48,19 @@
 
                 const data = await response.json();
 
-                if (data.invoice_url) {
-                    // Открываем окно оплаты Telegram
+                if (response.ok && data.invoice_url) {
                     tg.openInvoice(data.invoice_url, (status) => {
                         if (status === 'paid') {
-                            alert('🎉 Оплата прошла! Вращаем рулетку...');
-                        } else {
-                            alert('Оплата не была завершена.');
+                            tg.close();
                         }
                     });
                 } else {
-                    alert('Ошибка счета: ' + (data.error || 'Неизвестная ошибка'));
+                    // Выводим ТОЧНЫЙ текст ошибки от сервера
+                    alert('Ошибка сервера: ' + JSON.stringify(data));
                 }
             } catch (e) {
-                alert('Ошибка отправки запроса.');
+                // Выводим ошибку сети или ответа
+                alert('Сбой запроса: ' + e.message);
             }
         }
     </script>
