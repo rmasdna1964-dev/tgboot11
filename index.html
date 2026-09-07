@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upgrade Bear - Рулетка Звезд</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #0f172a;
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            background: #1e293b;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            text-align: center;
+            max-width: 450px;
+            width: 100%;
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #f8fafc;
+        }
+
+        /* Карточка мишки */
+        .bear-card {
+            background: #334155;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        .bear-avatar {
+            font-size: 80px;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .stars {
+            font-size: 24px;
+            color: #f59e0b;
+            letter-spacing: 2px;
+        }
+
+        /* Выбор цели */
+        .target-selector {
+            margin-bottom: 25px;
+        }
+
+        .target-selector label {
+            display: block;
+            margin-bottom: 10px;
+            color: #94a3b8;
+            font-size: 14px;
+        }
+
+        .star-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .star-btn {
+            background: #475569;
+            border: 2px solid transparent;
+            color: #fff;
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+
+        .star-btn.active {
+            border-color: #3b82f6;
+            background: #2563eb;
+        }
+
+        /* Рулетка */
+        .roulette-wrapper {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            margin: 0 auto 20px;
+        }
+
+        .wheel {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            transition: transform 4s cubic-bezier(0.15, 0.85, 0.35, 1.2);
+            box-shadow: 0 0 15px rgba(0,0,0,0.5);
+        }
+
+        /* Указатель рулетки */
+        .pointer {
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-top: 20px solid #ef4444;
+            z-index: 10;
+        }
+
+        /* Информация о шансе */
+        .info {
+            font-size: 16px;
+            margin-bottom: 20px;
+            color: #cbd5e1;
+        }
+
+        .chance-text {
+            color: #22c55e;
+            font-weight: bold;
+        }
+
+        /* Кнопка */
+        .upgrade-btn {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 12px;
+            cursor: pointer;
+            width: 100%;
+            transition: transform 0.1s, background 0.2s;
+        }
+
+        .upgrade-btn:hover {
+            transform: scale(1.02);
+        }
+
+        .upgrade-btn:disabled {
+            background: #64748b;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Результат */
+        .result-message {
+            margin-top: 15px;
+            font-weight: bold;
+            min-height: 24px;
+        }
+        .success { color: #22c55e; }
+        .fail { color: #ef4444; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Улучшение Мишки 🧸</h1>
+
+    <!-- Карточка персонажа -->
+    <div class="bear-card">
+        <span class="bear-avatar" id="bearAvatar">🧸</span>
+        <div class="stars" id="currentStars">★☆☆☆☆</div>
+    </div>
+
+    <!-- Выбор целевого уровня звезд -->
+    <div class="target-selector">
+        <label>Выберите желаемый уровень:</label>
+        <div class="star-buttons" id="starButtons">
+            <!-- Кнопки создаются через JS -->
+        </div>
+    </div>
+
+    <!-- Рулетка -->
+    <div class="roulette-wrapper">
+        <div class="pointer"></div>
+        <div class="wheel" id="wheel"></div>
+    </div>
+
+    <!-- Шанс успеха -->
+    <div class="info">
+        Шанс успеха: <span class="chance-text" id="chanceDisplay">0%</span>
+    </div>
+
+    <!-- Кнопка апгрейда -->
+    <button class="upgrade-btn" id="upgradeBtn" onclick="spin()">УЛУЧШИТЬ</button>
+
+    <!-- Текст результата -->
+    <div class="result-message" id="resultMessage"></div>
+</div>
+
+<script>
+    // Состояние игры
+    let currentLevel = 1; // Текущие звезды (1-5)
+    let targetLevel = 2;  // Целевые звезды (2-5)
+    let isSpinning = false;
+    let currentRotation = 0;
+
+    // Шансы для апгрейда (в процентах)
+    // Чем больше разница между текущим и целевым уровнем, тем ниже шанс
+    function calculateChance(current, target) {
+        if (target <= current) return 0;
+        const diff = target - current;
+        if (diff === 1) return 60; // На 1 звезду выше: 60%
+        if (diff === 2) return 35; // На 2 звезды выше: 35%
+        if (diff === 3) return 15; // На 3 звезды выше: 15%
+        if (diff === 4) return 5;  // На 4 звезды выше: 5%
+        return 0;
+    }
+
+    // Инициализация кнопок выбора
+    function initButtons() {
+        const container = document.getElementById('starButtons');
+        container.innerHTML = '';
+        
+        for (let i = 2; i <= 5; i++) {
+            const btn = document.createElement('button');
+            btn.className = `star-btn ${i === targetLevel ? 'active' : ''}`;
+            btn.innerText = `${i} ★`;
+            btn.onclick = () => selectTarget(i);
+            if (i <= currentLevel) {
+                btn.disabled = true;
+                btn.style.opacity = '0.3';
+            }
+            container.appendChild(btn);
+        }
+        updateUI();
+    }
+
+    // Выбор желаемого уровня
+    function selectTarget(level) {
+        if (isSpinning || level <= currentLevel) return;
+        targetLevel = level;
+        
+        // Обновляем активную кнопку
+        document.querySelectorAll('.star-btn').forEach((btn, idx) => {
+            btn.classList.toggle('active', (idx + 2) === targetLevel);
+        });
+
+        updateUI();
+    }
+
+    // Обновление интерфейса и рулетки
+    function updateUI() {
+        // Звезды текущие
+        let starsStr = '';
+        for (let i = 1; i <= 5; i++) {
+            starsStr += i <= currentLevel ? '★' : '☆';
+        }
+        document.getElementById('currentStars').innerText = starsStr;
+
+        // Если достигнут максимум
+        if (currentLevel === 5) {
+            document.getElementById('chanceDisplay').innerText = 'МАКСИМУМ!';
+            document.getElementById('upgradeBtn').disabled = true;
+            document.getElementById('wheel').style.background = '#22c55e';
+            return;
+        }
+
+        const chance = calculateChance(currentLevel, targetLevel);
+        document.getElementById('chanceDisplay').innerText = chance + '%';
+
+        // Рисуем круговую диаграмму (Зеленый = Успех, Красный = Провал)
+        const wheel = document.getElementById('wheel');
+        const greenDegrees = (chance / 100) * 360;
+        wheel.style.background = `conic-gradient(
+            #22c55e 0deg ${greenDegrees}deg,
+            #ef4444 ${greenDegrees}deg 360deg
+        )`;
+    }
+
+    // Запуск рулетки
+    function spin() {
+        if (isSpinning || currentLevel >= 5 || targetLevel <= currentLevel) return;
+
+        isSpinning = true;
+        document.getElementById('upgradeBtn').disabled = true;
+        document.getElementById('resultMessage').innerText = '';
+
+        const chance = calculateChance(currentLevel, targetLevel);
+        const isSuccess = Math.random() * 100 < chance;
+
+        // Определяем угол, на который должна приехать рулетка
+        // Стрелка находится НАВЕРХУ (0 градусов)
+        const greenDegrees = (chance / 100) * 360;
+        
+        let targetDegree;
+        if (isSuccess) {
+            // Попадаем в зеленый сектор (от 1 до greenDegrees)
+            targetDegree = Math.random() * (greenDegrees - 10) + 5; 
+        } else {
+            // Попадаем в красный сектор (от greenDegrees до 360)
+            targetDegree = Math.random() * (360 - greenDegrees - 10) + greenDegrees + 5;
+        }
+
+        // Чтобы колесо приехало сектором К ВЕРХУ, вращаем противоположно
+        const stopAngle = 360 - targetDegree; 
+        
+        // Добавляем 5 полных оборотов (5 * 360 = 1800) для эффекта кручения
+        const extraTurns = 1800;
+        currentRotation += extraTurns + (stopAngle - (currentRotation % 360));
+
+        const wheel = document.getElementById('wheel');
+        wheel.style.transform = `rotate(${currentRotation}deg)`;
+
+        // Ожидание окончания анимации (4 секунды)
+        setTimeout(() => {
+            const msg = document.getElementById('resultMessage');
+            if (isSuccess) {
+                currentLevel = targetLevel;
+                msg.innerText = `УСПЕХ! Ваш мишка теперь ${currentLevel} ★! 🎉`;
+                msg.className = 'result-message success';
+                
+                // Если не макс уровень, ставим следующий target
+                if (currentLevel < 5) targetLevel = currentLevel + 1;
+            } else {
+                msg.innerText = 'ПРОВАЛ! Улучшение не удалось 😢';
+                msg.className = 'result-message fail';
+            }
+
+            isSpinning = false;
+            document.getElementById('upgradeBtn').disabled = false;
+            initButtons();
+        }, 4000);
+    }
+
+    // Старт игры при загрузке
+    initButtons();
+</script>
+
+</body>
+</html>
