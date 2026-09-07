@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Рулетка</title>
+    <title>Рулетка Звезд</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         body {
@@ -21,42 +21,32 @@
             background-color: #0088cc;
             color: white;
             border: none;
-            padding: 15px 30px;
+            padding: 16px 32px;
             font-size: 18px;
             font-weight: bold;
             border-radius: 12px;
             cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+            transition: transform 0.1s ease;
+        }
+        .btn:active {
+            transform: scale(0.96);
         }
     </style>
 </head>
 <body>
 
     <h1>🎰 Рулетка Звезд</h1>
-    <button class="btn" onclick="payInBot(5)">Крутить за 5 ⭐</button>
+    <button class="btn" onclick="buySpin()">Крутить за 5 ⭐</button>
 
     <script>
         const tg = window.Telegram.WebApp;
         tg.expand();
 
-        async function payInBot(starsCount) {
-            try {
-                const response = await fetch('/api/create-invoice', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ stars: starsCount })
-                });
-
-                const data = await response.json();
-
-                if (response.ok && data.invoice_url) {
-                    tg.openTelegramLink(data.invoice_url);
-                    tg.close();
-                } else {
-                    alert('Ошибка сервера Vercel: ' + (data.error || JSON.stringify(data)));
-                }
-            } catch (e) {
-                alert('Ошибка сети: ' + e.message);
-            }
+        function buySpin() {
+            // Отправляем сигнал "buy_spin_5" обратно в чат с ботом и закрываем Mini App
+            tg.sendData("buy_spin_5");
+            tg.close();
         }
     </script>
 </body>
