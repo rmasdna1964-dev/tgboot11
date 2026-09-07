@@ -3,670 +3,72 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Рулетка Мишек | @POZblGRblW1</title>
-    
-    <!-- Telegram WebApp SDK -->
+    <title>Рулетка</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <!-- Подключение библиотеки html2canvas для скачивания чеков -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    
     <style>
-        :root {
-            --bg-main: #07090e;
-            --card-bg: rgba(21, 26, 36, 0.85);
-            --card-border: rgba(36, 44, 61, 0.8);
-            --accent-green: #10b981;
-            --accent-blue: #3b82f6;
-            --accent-gold: #f59e0b;
-            --accent-purple: #8b5cf6;
-            --text-primary: #f3f4f6;
-            --text-secondary: #9ca3af;
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            user-select: none;
-        }
-
         body {
-            background-color: var(--bg-main);
-            color: var(--text-primary);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 20px 16px;
-            overflow-x: hidden;
-            position: relative;
-        }
-
-        /* Задний фон с частицами */
-        #bgCanvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            pointer-events: none;
-            z-index: 0;
-        }
-
-        #confettiCanvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            pointer-events: none;
-            z-index: 100;
-        }
-
-        .wrapper {
-            display: flex;
-            max-width: 420px;
-            width: 100%;
-            justify-content: center;
-            align-items: center;
-            z-index: 1;
-        }
-
-        .container {
-            background: var(--card-bg);
-            backdrop-filter: blur(12px);
-            padding: 28px 24px;
-            border-radius: 28px;
-            border: 1px solid var(--card-border);
-            text-align: center;
-            width: 100%;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.05);
-            position: relative;
-            transition: transform 0.3s ease, border-color 0.3s ease;
-        }
-
-        .container:hover {
-            border-color: rgba(139, 92, 246, 0.3);
-        }
-
-        .tg-badge {
-            display: inline-flex;
-            align-items: center;
-            background: rgba(59, 130, 246, 0.12);
-            border: 1px solid rgba(59, 130, 246, 0.4);
-            padding: 6px 16px;
-            border-radius: 20px;
-            font-size: 13px;
-            color: var(--accent-blue);
-            font-weight: 700;
-            margin-bottom: 16px;
-            text-decoration: none;
-            box-shadow: 0 0 12px rgba(59, 130, 246, 0.2);
-            transition: all 0.2s ease;
-        }
-
-        .tg-badge:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 0 18px rgba(59, 130, 246, 0.4);
-        }
-
-        h1 { 
-            font-size: 24px; 
-            font-weight: 800; 
-            background: linear-gradient(135deg, #ffffff 0%, #9ca3af 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .subtitle { font-size: 12px; color: var(--text-secondary); margin-bottom: 18px; }
-
-        .input-box {
-            margin-bottom: 16px;
-            text-align: left;
-        }
-
-        .input-label {
-            font-size: 11px;
-            color: var(--text-secondary);
-            margin-bottom: 6px;
-            display: block;
-            font-weight: 700;
-            letter-spacing: 0.5px;
-        }
-
-        .tg-input {
-            width: 100%;
-            background: rgba(0, 0, 0, 0.35);
-            border: 1px solid var(--card-border);
-            border-radius: 14px;
-            padding: 12px 14px;
-            color: var(--accent-gold);
-            font-size: 14px;
-            font-weight: 700;
-            outline: none;
-            transition: all 0.2s ease;
-        }
-
-        .tg-input:focus { 
-            border-color: var(--accent-blue);
-            box-shadow: 0 0 12px rgba(59, 130, 246, 0.25);
-        }
-
-        .stars-grid {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 18px;
-        }
-
-        .star-card {
-            flex: 1;
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid var(--card-border);
-            padding: 10px 4px;
-            border-radius: 16px;
-            cursor: pointer;
-            transition: all 0.25s ease;
+            font-family: Arial, sans-serif;
+            background-color: #1c1c1e;
+            color: #ffffff;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 4px;
-        }
-
-        .star-card:hover {
-            transform: translateY(-2px);
-            background: rgba(255, 255, 255, 0.05);
-        }
-
-        .star-card.active {
-            border-color: var(--accent-gold);
-            background: rgba(245, 158, 11, 0.1);
-            box-shadow: 0 0 15px rgba(245, 158, 11, 0.25);
-        }
-
-        .star-card .star-val { font-size: 15px; font-weight: 800; color: var(--accent-gold); }
-        .star-card .star-percent { 
-            font-size: 11px; font-weight: 700; color: var(--accent-green); 
-            background: rgba(16, 185, 129, 0.15); padding: 2px 6px; border-radius: 8px;
-        }
-
-        .roulette-container {
-            position: relative;
-            width: 190px;
-            height: 190px;
-            margin: 0 auto 18px;
-            display: flex;
             justify-content: center;
-            align-items: center;
+            height: 100vh;
+            margin: 0;
         }
-
-        .pointer {
-            position: absolute;
-            top: -10px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 18px;
-            height: 22px;
-            background: #ffffff;
-            clip-path: polygon(100% 0, 0 0, 50% 100%);
-            z-index: 10;
-            filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.8));
-        }
-
-        .wheel-border {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            padding: 5px;
-            background: linear-gradient(145deg, var(--card-border), rgba(255,255,255,0.05));
-            box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.8), 0 0 20px rgba(0, 0, 0, 0.5);
-        }
-
-        .wheel {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            transition: transform 4s cubic-bezier(0.12, 0.8, 0.15, 1);
-            position: relative;
-        }
-
-        .bear-center {
-            position: absolute;
-            width: 68px;
-            height: 68px;
-            background: var(--card-bg);
-            border-radius: 50%;
-            border: 2px solid var(--card-border);
-            z-index: 5;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            pointer-events: none;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.8);
-            transition: transform 0.5s ease;
-        }
-
-        .bear-center.win-anim {
-            animation: bearPop 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) infinite alternate;
-        }
-
-        @keyframes bearPop {
-            0% { transform: scale(1); box-shadow: 0 0 15px rgba(16, 185, 129, 0.4); }
-            100% { transform: scale(1.3); box-shadow: 0 0 30px rgba(16, 185, 129, 0.9); }
-        }
-
-        .bear-center svg { width: 42px; height: 42px; }
-
-        .chance-box {
-            background: rgba(0, 0, 0, 0.3);
-            border: 1px solid var(--card-border);
-            padding: 12px 14px;
-            border-radius: 16px;
-            margin-bottom: 18px;
-        }
-
-        .slider-header {
-            display: flex;
-            justify-content: space-between;
-            font-size: 12px;
-            color: var(--text-secondary);
-            margin-bottom: 8px;
-        }
-
-        .range-slider {
-            width: 100%;
-            height: 5px;
-            background: var(--card-border);
-            border-radius: 3px;
-            outline: none;
-            cursor: pointer;
-            accent-color: var(--accent-blue);
-        }
-
-        .pay-btn {
-            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-            color: #ffffff;
+        .btn {
+            background-color: #0088cc;
+            color: white;
             border: none;
-            padding: 15px;
-            font-size: 14px;
-            font-weight: 800;
-            border-radius: 16px;
+            padding: 15px 30px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 12px;
             cursor: pointer;
-            width: 100%;
-            transition: all 0.25s ease;
-            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.35);
-            position: relative;
-            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
         }
-
-        .pay-btn:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.5);
-        }
-
-        .pay-btn:active:not(:disabled) {
-            transform: translateY(1px);
-        }
-
-        .pay-btn:disabled { 
-            background: var(--card-border); 
-            color: var(--text-secondary); 
-            cursor: not-allowed;
-            box-shadow: none;
-        }
-
-        .result-message { margin-top: 14px; font-weight: 700; min-height: 20px; font-size: 13px; line-height: 1.4; }
-        .success { color: var(--accent-green); text-shadow: 0 0 10px rgba(16, 185, 129, 0.3); }
-        .fail { color: #ef4444; }
-
-        /* Чек для скриншота */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100vw; height: 100vh;
-            background: rgba(0,0,0,0.85);
-            backdrop-filter: blur(8px);
-            z-index: 200;
-            justify-content: center;
-            align-items: center;
-            padding: 16px;
-        }
-
-        .receipt-card {
-            background: #0f141c;
-            border: 2px solid var(--accent-gold);
-            border-radius: 24px;
-            padding: 26px;
-            width: 100%;
-            max-width: 330px;
-            text-align: center;
-            box-shadow: 0 0 35px rgba(245, 158, 11, 0.3);
-        }
-
-        .receipt-title { font-size: 18px; font-weight: 800; color: var(--accent-gold); margin-bottom: 4px; letter-spacing: 1px; }
-        .receipt-user { font-size: 16px; font-weight: 700; color: #fff; margin-bottom: 12px; }
-        .receipt-info { font-size: 12px; color: var(--text-secondary); margin-bottom: 16px; text-align: left; line-height: 1.6; }
-        .receipt-contact { 
-            background: rgba(245, 158, 11, 0.1); 
-            border: 1px dashed var(--accent-gold); 
-            padding: 12px; 
-            border-radius: 14px; 
-            font-size: 12px; 
-            color: #fff; 
-            margin-bottom: 16px; 
-            font-weight: 600;
-        }
-        .receipt-contact a { color: var(--accent-gold); text-decoration: none; font-weight: 800; }
-        .receipt-btn { 
-            background: linear-gradient(135deg, #10b981, #059669); 
-            color: #ffffff; 
-            font-weight: 800; 
-            border: none; 
-            padding: 14px; 
-            border-radius: 14px; 
-            width: 100%; 
-            cursor: pointer; 
-            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
-            transition: all 0.2s ease;
-        }
-        .receipt-btn:hover {
-            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.5);
+        .btn:active {
+            transform: scale(0.98);
         }
     </style>
 </head>
 <body>
 
-<!-- Частицы фона и салют -->
-<canvas id="bgCanvas"></canvas>
-<canvas id="confettiCanvas"></canvas>
+    <h1>🎰 Рулетка Звезд</h1>
+    <button class="btn" onclick="buySpin(5)">Крутить за 5 ⭐</button>
 
-<div class="wrapper">
-    <!-- РУЛЕТКА -->
-    <div class="container">
-        <a href="https://t.me/POZblGRblW1" target="_blank" class="tg-badge">@POZblGRblW1</a>
+    <script>
+        const tg = window.Telegram.WebApp;
+        tg.expand();
 
-        <div class="header-box">
-            <h1>Выбей Мишку</h1>
-        </div>
-        <div class="subtitle">Рулетка Telegram Stars</div>
+        async function buySpin(starsCount) {
+            try {
+                // Запрос к созданному Vercel Serverless API
+                const response = await fetch('/api/create-invoice', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ stars: starsCount })
+                });
 
-        <div class="input-box">
-            <span class="input-label">ВАШ TELEGRAM ЮЗЕРНЕЙМ</span>
-            <input type="text" id="userInput" class="tg-input" value="@Z_L_0_l" placeholder="@username">
-        </div>
+                const data = await response.json();
 
-        <div class="stars-grid">
-            <div class="star-card" onclick="selectStar(2)"><span class="star-val">2 ★</span><span class="star-percent">8%</span></div>
-            <div class="star-card" onclick="selectStar(3)"><span class="star-val">3 ★</span><span class="star-percent">15%</span></div>
-            <div class="star-card" onclick="selectStar(4)"><span class="star-val">4 ★</span><span class="star-percent">20%</span></div>
-            <div class="star-card active" onclick="selectStar(5)"><span class="star-val">5 ★</span><span class="star-percent">25%</span></div>
-        </div>
-
-        <div class="roulette-container">
-            <div class="pointer"></div>
-            <div class="wheel-border"><div class="wheel" id="wheel"></div></div>
-            <div class="bear-center" id="bearCenter">
-                <svg viewBox="0 0 100 100" fill="none">
-                    <circle cx="28" cy="28" r="14" fill="#374151"/>
-                    <circle cx="72" cy="28" r="14" fill="#374151"/>
-                    <circle cx="50" cy="52" r="32" fill="#1f2937"/>
-                    <ellipse cx="50" cy="60" rx="16" ry="12" fill="#111827"/>
-                    <circle cx="50" cy="54" r="5" fill="#10b981"/>
-                    <circle cx="38" cy="46" r="3" fill="#3b82f6"/>
-                    <circle cx="62" cy="46" r="3" fill="#3b82f6"/>
-                </svg>
-            </div>
-        </div>
-
-        <div class="chance-box">
-            <div class="slider-header">
-                <span>Количество попыток:</span><b id="sliderValText" style="color: #fff;">1</b>
-            </div>
-            <input type="range" min="1" max="10" value="1" class="range-slider" id="chanceSlider" oninput="updateUI()">
-        </div>
-
-        <button class="pay-btn" id="payBtn" onclick="buySpin()">Испытать удачу</button>
-        <div class="result-message" id="resultMessage"></div>
-    </div>
-</div>
-
-<!-- Модальное окно чека выигрыша -->
-<div class="modal" id="receiptModal">
-    <div class="receipt-card" id="receiptToCapture">
-        <div style="font-size: 34px; margin-bottom: 6px;">🧸🎉</div>
-        <div class="receipt-title">ЧЕК ВЫИГРЫША</div>
-        <div class="receipt-user" id="receiptUser">@Z_L_0_l</div>
-        <div class="receipt-info">
-            • <b>Приз:</b> Мишка (Размер: 15 ⭐)<br>
-            • <b>Редкость:</b> <span id="receiptStar">5</span>★<br>
-            • <b>Проект:</b> @POZblGRblW1<br>
-            • <b>Дата:</b> <span id="receiptDate"></span><br>
-            • <b>Статус:</b> ПОДТВЕРЖДЕНО
-        </div>
-        <div class="receipt-contact">
-            Сделайте скриншот и отправьте в ЛС:<br>
-            <a href="https://t.me/Z_L_0_l" target="_blank">@Z_L_0_l</a>
-        </div>
-        <button class="receipt-btn" onclick="downloadReceiptScreenshot()">СКАЧАТЬ СКРИНШОТ</button>
-        <button style="background:transparent; border:none; color:var(--text-secondary); margin-top:12px; cursor:pointer; font-size:12px;" onclick="closeModal()">Закрыть окно</button>
-    </div>
-</div>
-
-<script>
-    // --- Инициализация Telegram WebApp ---
-    const tg = window.Telegram?.WebApp;
-    if (tg) {
-        tg.ready();
-        tg.expand(); // Растягиваем на весь экран
-        
-        // Автоматически получаем username открывшего пользователя
-        if (tg.initDataUnsafe?.user?.username) {
-            document.getElementById('userInput').value = '@' + tg.initDataUnsafe.user.username;
-        }
-    }
-
-    let selectedStar = 5;
-    let isSpinning = false;
-    let currentRotation = 0;
-    const chances = { 2: 8, 3: 15, 4: 20, 5: 25 };
-
-    /* Анимированный фоновый Canvas */
-    const bgCanvas = document.getElementById('bgCanvas');
-    const bgCtx = bgCanvas.getContext('2d');
-    let bgParticles = [];
-
-    function resizeBg() {
-        bgCanvas.width = window.innerWidth;
-        bgCanvas.height = window.innerHeight;
-    }
-    window.addEventListener('resize', resizeBg);
-    resizeBg();
-
-    for (let i = 0; i < 40; i++) {
-        bgParticles.push({
-            x: Math.random() * bgCanvas.width,
-            y: Math.random() * bgCanvas.height,
-            size: Math.random() * 2 + 1,
-            speedY: Math.random() * 0.4 + 0.1,
-            alpha: Math.random() * 0.5 + 0.1
-        });
-    }
-
-    function renderBg() {
-        bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
-        bgParticles.forEach(p => {
-            p.y -= p.speedY;
-            if (p.y < 0) p.y = bgCanvas.height;
-            bgCtx.fillStyle = `rgba(255, 255, 255, ${p.alpha})`;
-            bgCtx.beginPath();
-            bgCtx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-            bgCtx.fill();
-        });
-        requestAnimationFrame(renderBg);
-    }
-    renderBg();
-
-    /* Звуковой движок */
-    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    function playBeep(freq, duration) {
-        try {
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.frequency.value = freq;
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
-            osc.start();
-            gain.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + duration);
-            osc.stop(audioCtx.currentTime + duration);
-        } catch(e){}
-    }
-
-    function selectStar(star) {
-        if (isSpinning) return;
-        selectedStar = star;
-        const cards = document.querySelectorAll('.star-card');
-        cards.forEach((card, idx) => card.classList.toggle('active', idx + 2 === star));
-        updateUI();
-    }
-
-    function updateUI() {
-        if (isSpinning) return;
-        const spinsCount = parseInt(document.getElementById('chanceSlider').value);
-        document.getElementById('sliderValText').innerText = `${spinsCount}`;
-        const activeChance = chances[selectedStar];
-        const totalPrice = selectedStar * spinsCount;
-
-        document.getElementById('payBtn').innerText = `КРУТИТЬ ${selectedStar}★ (${spinsCount}x) ЗА ${totalPrice} ⭐`;
-        const displayDegrees = (activeChance / 100) * 360;
-        document.getElementById('wheel').style.background = `conic-gradient(#10b981 0deg ${displayDegrees}deg, #1f2937 ${displayDegrees}deg 360deg)`;
-    }
-
-    function buySpin() {
-        if (isSpinning) return;
-        const user = document.getElementById('userInput').value.trim();
-        if(!user) { alert('Пожалуйста, укажите ваш Telegram Username!'); return; }
-
-        const spinsCount = parseInt(document.getElementById('chanceSlider').value);
-        const chance = chances[selectedStar];
-        const totalPrice = selectedStar * spinsCount;
-
-        if (confirm(`Игрок: ${user}\nКрутить ${selectedStar}★ за ${totalPrice} ⭐?`)) {
-            spin(chance, spinsCount);
-        }
-    }
-
-    function spin(chance, remainingSpins) {
-        isSpinning = true;
-        document.getElementById('payBtn').disabled = true;
-        document.getElementById('chanceSlider').disabled = true;
-        document.getElementById('resultMessage').innerText = `Вращение... Осталось попыток: ${remainingSpins}`;
-        document.getElementById('resultMessage').className = 'result-message';
-        document.getElementById('bearCenter').classList.remove('win-anim');
-
-        const isSuccess = (Math.random() * 100) <= chance;
-        const winZoneAngle = (chance / 100) * 360;
-
-        let targetDegree = isSuccess 
-            ? Math.random() * (winZoneAngle - 4) + 2
-            : Math.random() * (360 - winZoneAngle - 20) + winZoneAngle + 10;
-
-        const stopAngle = 360 - targetDegree;
-        currentRotation += 1800 + (stopAngle - (currentRotation % 360));
-
-        const wheel = document.getElementById('wheel');
-        wheel.style.transform = `rotate(${currentRotation}deg)`;
-
-        let soundInterval = setInterval(() => playBeep(220, 0.05), 140);
-
-        setTimeout(() => {
-            clearInterval(soundInterval);
-            const msg = document.getElementById('resultMessage');
-            
-            if (isSuccess) {
-                playBeep(600, 0.4);
-                document.getElementById('bearCenter').classList.add('win-anim');
-                const username = document.getElementById('userInput').value;
-                msg.innerHTML = `Победа! 🎉 Выбит Мишка размера <b>15 ⭐</b>!<br>Сделайте скриншот и напишите <a href="https://t.me/Z_L_0_l" target="_blank" style="color: var(--accent-gold); font-weight: 700;">@Z_L_0_l</a>`;
-                msg.className = 'result-message success';
-                launchConfetti();
-                openReceiptModal(username, selectedStar);
-                endSpinSession();
-            } else if (remainingSpins > 1) {
-                spin(chance, remainingSpins - 1);
-            } else {
-                playBeep(120, 0.3);
-                msg.innerText = 'Не повезло! Попробуйте еще раз.';
-                msg.className = 'result-message fail';
-                endSpinSession();
-            }
-        }, 4000);
-    }
-
-    function endSpinSession() {
-        isSpinning = false;
-        document.getElementById('payBtn').disabled = false;
-        document.getElementById('chanceSlider').disabled = false;
-        updateUI();
-    }
-
-    /* СКРИНШОТ И ЧЕК */
-    function openReceiptModal(username, star) {
-        document.getElementById('receiptUser').innerText = username;
-        document.getElementById('receiptStar').innerText = star;
-        document.getElementById('receiptDate').innerText = new Date().toLocaleString();
-        document.getElementById('receiptModal').style.display = 'flex';
-    }
-
-    function closeModal() {
-        document.getElementById('receiptModal').style.display = 'none';
-    }
-
-    function downloadReceiptScreenshot() {
-        const card = document.getElementById('receiptToCapture');
-        html2canvas(card).then(canvas => {
-            const link = document.createElement('a');
-            link.download = `WIN_BEAR_15STARS_${document.getElementById('receiptUser').innerText}.png`;
-            link.href = canvas.toDataURL();
-            link.click();
-        });
-    }
-
-    /* САЛЮТ */
-    function launchConfetti() {
-        const canvas = document.getElementById('confettiCanvas');
-        const ctx = canvas.getContext('2d');
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-        const particles = [];
-        const colors = ['#10b981', '#3b82f6', '#f59e0b', '#8b5cf6', '#ffffff'];
-
-        for (let i = 0; i < 80; i++) {
-            particles.push({
-                x: canvas.width / 2, y: canvas.height / 2,
-                vx: (Math.random() - 0.5) * 14, vy: (Math.random() - 0.7) * 14,
-                size: Math.random() * 6 + 3, color: colors[Math.floor(Math.random() * colors.length)], alpha: 1
-            });
-        }
-
-        function animate() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            let active = false;
-            particles.forEach(p => {
-                p.x += p.vx; p.y += p.vy; p.vy += 0.2; p.alpha -= 0.015;
-                if (p.alpha > 0) {
-                    active = true;
-                    ctx.globalAlpha = p.alpha;
-                    ctx.fillStyle = p.color;
-                    ctx.fillRect(p.x, p.y, p.size, p.size);
+                if (data.invoice_url) {
+                    // Открываем окно оплаты Telegram
+                    tg.openInvoice(data.invoice_url, (status) => {
+                        if (status === 'paid') {
+                            alert('🎉 Оплата прошла! Вращаем рулетку...');
+                        } else {
+                            alert('Оплата не была завершена.');
+                        }
+                    });
+                } else {
+                    alert('Ошибка счета: ' + (data.error || 'Неизвестная ошибка'));
                 }
-            });
-            if (active) requestAnimationFrame(animate);
+            } catch (e) {
+                alert('Ошибка отправки запроса.');
+            }
         }
-        animate();
-    }
-
-    updateUI();
-</script>
-
+    </script>
 </body>
 </html>
