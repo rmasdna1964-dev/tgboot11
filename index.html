@@ -26,19 +26,23 @@
             font-weight: bold;
             border-radius: 12px;
             cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+        .btn:active {
+            transform: scale(0.98);
         }
     </style>
 </head>
 <body>
 
     <h1>🎰 Рулетка Звезд</h1>
-    <button class="btn" onclick="buySpin(5)">Крутить за 5 ⭐</button>
+    <button class="btn" onclick="payInBot(5)">Крутить за 5 ⭐ (Переход в бот)</button>
 
     <script>
         const tg = window.Telegram.WebApp;
         tg.expand();
 
-        async function buySpin(starsCount) {
+        async function payInBot(starsCount) {
             try {
                 const response = await fetch('/api/create-invoice', {
                     method: 'POST',
@@ -49,18 +53,14 @@
                 const data = await response.json();
 
                 if (response.ok && data.invoice_url) {
-                    tg.openInvoice(data.invoice_url, (status) => {
-                        if (status === 'paid') {
-                            tg.close();
-                        }
-                    });
+                    // Перенаправляем пользователя к счёту в чат и закрываем Mini App
+                    tg.openTelegramLink(data.invoice_url);
+                    tg.close();
                 } else {
-                    // Выводим ТОЧНЫЙ текст ошибки от сервера
-                    alert('Ошибка сервера: ' + JSON.stringify(data));
+                    alert('Ошибка: ' + JSON.stringify(data));
                 }
             } catch (e) {
-                // Выводим ошибку сети или ответа
-                alert('Сбой запроса: ' + e.message);
+                alert('Ошибка сети: ' + e.message);
             }
         }
     </script>
