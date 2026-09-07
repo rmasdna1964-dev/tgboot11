@@ -1,0 +1,22 @@
+{
+  "builds": [
+    {
+      "src": "api/create-invoice.py",
+      "use": "@vercel/python"
+    },
+    {
+      "src": "index.html",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/create-invoice",
+      "dest": "api/create-invoice.py"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/$1"
+    }
+  ]
+}
