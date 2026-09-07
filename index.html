@@ -26,17 +26,13 @@
             font-weight: bold;
             border-radius: 12px;
             cursor: pointer;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-        }
-        .btn:active {
-            transform: scale(0.98);
         }
     </style>
 </head>
 <body>
 
     <h1>🎰 Рулетка Звезд</h1>
-    <button class="btn" onclick="payInBot(5)">Крутить за 5 ⭐ (Переход в бот)</button>
+    <button class="btn" onclick="payInBot(5)">Крутить за 5 ⭐</button>
 
     <script>
         const tg = window.Telegram.WebApp;
@@ -53,11 +49,10 @@
                 const data = await response.json();
 
                 if (response.ok && data.invoice_url) {
-                    // Перенаправляем пользователя к счёту в чат и закрываем Mini App
                     tg.openTelegramLink(data.invoice_url);
                     tg.close();
                 } else {
-                    alert('Ошибка: ' + JSON.stringify(data));
+                    alert('Ошибка сервера Vercel: ' + (data.error || JSON.stringify(data)));
                 }
             } catch (e) {
                 alert('Ошибка сети: ' + e.message);
