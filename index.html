@@ -4,8 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Рулетка Мишек | @POZblGRblW1</title>
+    
+    <!-- Telegram WebApp SDK -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <!-- Подключение библиотеки html2canvas для скачивания чеков -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
     <style>
         :root {
             --bg-main: #07090e;
@@ -449,6 +453,18 @@
 </div>
 
 <script>
+    // --- Инициализация Telegram WebApp ---
+    const tg = window.Telegram?.WebApp;
+    if (tg) {
+        tg.ready();
+        tg.expand(); // Растягиваем на весь экран
+        
+        // Автоматически получаем username открывшего пользователя
+        if (tg.initDataUnsafe?.user?.username) {
+            document.getElementById('userInput').value = '@' + tg.initDataUnsafe.user.username;
+        }
+    }
+
     let selectedStar = 5;
     let isSpinning = false;
     let currentRotation = 0;
@@ -543,7 +559,7 @@
         isSpinning = true;
         document.getElementById('payBtn').disabled = true;
         document.getElementById('chanceSlider').disabled = true;
-        document.getElementById('resultMessage').innerText = `Вращение... Осело попыток: ${remainingSpins}`;
+        document.getElementById('resultMessage').innerText = `Вращение... Осталось попыток: ${remainingSpins}`;
         document.getElementById('resultMessage').className = 'result-message';
         document.getElementById('bearCenter').classList.remove('win-anim');
 
