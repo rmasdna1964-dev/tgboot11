@@ -1,16 +1,10 @@
 export default async function handler(req, res) {
-    // Разрешаем CORS-запросы
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
-    if (req.method === 'OPTIONS') {
-        return res.status(200).end();
-    }
-
-    if (req.method !== 'POST') {
-        return res.status(405).json({ error: 'Method Not Allowed' });
-    }
+    if (req.method === 'OPTIONS') return res.status(200).end();
+    if (req.method !== 'POST') return res.status(405).json({ error: 'Method Not Allowed' });
 
     const BOT_TOKEN = "8872260684:AAHU65LnhHmLAItW3J6ECA-l9RyAOaSwAy8";
     const { stars = 5 } = req.body || {};
@@ -23,14 +17,13 @@ export default async function handler(req, res) {
                 title: "Попытка в рулетке",
                 description: `Вращение рулетки за ${stars} зв.`,
                 payload: `spin_${stars}_stars`,
-                provider_token: "", // Для Telegram Stars всегда пустая строка
+                provider_token: "",
                 currency: "XTR",
                 prices: [{ label: "Звезды", amount: Number(stars) }]
             })
         });
 
         const data = await response.json();
-
         if (data.ok) {
             return res.status(200).json({ invoice_url: data.result });
         } else {
