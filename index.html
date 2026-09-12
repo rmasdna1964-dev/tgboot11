@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RingAuth App</title>
+    <title>RingAuth App with Dino Game</title>
 
     <!-- EmailJS SDK -->
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
@@ -78,7 +78,7 @@
 
         .form-box {
             position: absolute;
-            width: 300px;
+            width: 320px;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -146,10 +146,6 @@
             box-shadow: 0 0 10px #ff0000;
         }
 
-        .form-box .inputBx input::placeholder {
-            color: rgba(255, 255, 255, 0.75);
-        }
-
         .form-box .links {
             position: relative;
             width: 100%;
@@ -182,6 +178,56 @@
         .status-msg.error {
             color: #ff3333;
             text-shadow: 0 0 8px rgba(255, 51, 51, 0.6);
+        }
+
+        /* Стили для игры Динозавр */
+        .dino-container {
+            width: 100%;
+            height: 140px;
+            background: #1a1a1a;
+            border: 2px solid #ff0000;
+            border-radius: 12px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 10px rgba(255, 0, 0, 0.4);
+        }
+
+        #dino {
+            width: 25px;
+            height: 35px;
+            position: absolute;
+            bottom: 0;
+            left: 20px;
+            background: #00ff64;
+            border-radius: 4px;
+        }
+
+        #cactus {
+            width: 15px;
+            height: 30px;
+            position: absolute;
+            bottom: 0;
+            left: 300px;
+            background: #ff3333;
+            border-radius: 4px;
+        }
+
+        .jump {
+            animation: dinoJump 0.4s linear;
+        }
+
+        @keyframes dinoJump {
+            0% { bottom: 0; }
+            50% { bottom: 65px; }
+            100% { bottom: 0; }
+        }
+
+        .dino-score {
+            position: absolute;
+            top: 5px;
+            right: 10px;
+            font-size: 0.8em;
+            color: #fff;
         }
 
         /* Личный кабинет */
@@ -258,7 +304,7 @@
             align-items: center;
             cursor: pointer;
             text-decoration: none;
-            font-size: 1.3em;
+            font-size: 1.2em;
             color: #fff;
             opacity: 0.5;
             transition: 0.4s;
@@ -273,7 +319,7 @@
         .nav-indicator {
             position: absolute;
             top: 0;
-            left: 22px;
+            left: 15px;
             width: 25px;
             height: 4px;
             background: #fff;
@@ -305,10 +351,13 @@
                 <a onclick="showForm('forgotForm')">Забыли пароль?</a>
                 <a onclick="showForm('signupForm')">Регистрация</a>
             </div>
+            <div class="links" style="justify-content: center; margin-top: 5px;">
+                <a onclick="showForm('gameForm')" style="color: #00ff64;">🎮 Играть с динозавром</a>
+            </div>
         </div>
 
         <!-- 2. Форма Регистрации -->
-        <form class="form-box hidden" id="signupForm" onsubmit="sendEmailCode(event)">
+        <form class="form-box hidden" id="signupForm" onsubmit="sendEmailCode(event, 'signup')">
             <h2>Регистрация</h2>
             <div class="inputBx">
                 <input type="text" id="signupUser" placeholder="Имя пользователя">
@@ -336,40 +385,64 @@
             <div class="inputBx">
                 <input type="text" id="userInputCode" class="code-input" maxlength="6" placeholder="000000">
             </div>
-            <div class="inputBx">
+            <div class="inputBx" id="newPasswordWrapper" style="display:none; margin-top: 10px;">
+                <input type="password" id="newPasswordInput" placeholder="Новый пароль">
+            </div>
+            <div class="inputBx" style="margin-top: 10px;">
                 <input type="button" onclick="verifyCode()" value="Подтвердить">
             </div>
             <div class="links">
-                <a onclick="showForm('signupForm')">Назад</a>
+                <a onclick="showForm('loginForm')">Отмена</a>
                 <a onclick="resendCode()">Отправить снова</a>
             </div>
         </div>
 
         <!-- 4. Форма Сброса пароля -->
-        <div class="form-box hidden" id="forgotForm">
+        <form class="form-box hidden" id="forgotForm" onsubmit="sendEmailCode(event, 'forgot')">
             <h2>Сброс пароля</h2>
             <div class="inputBx">
-                <input type="email" placeholder="Введите ваш Email">
+                <input type="email" id="forgotEmail" name="to_email" placeholder="Введите ваш Email" required>
+                <input type="hidden" name="email" id="forgotHiddenEmail">
+                <input type="hidden" name="code" id="forgotHiddenCode">
             </div>
             <div class="inputBx">
-                <input type="submit" value="Отправить ссылку" onclick="showForm('loginForm'); alert('Ссылка для сброса отправлена!');">
+                <input type="submit" value="Отправить код">
             </div>
             <div class="links">
                 <a onclick="showForm('loginForm')">Войти</a>
                 <a onclick="showForm('signupForm')">Регистрация</a>
             </div>
+        </form>
+
+        <!-- Окно с игрой Динозавр (доступно до входа) -->
+        <div class="form-box hidden" id="gameForm">
+            <h2>Динозавр</h2>
+            <div class="dino-container" onclick="jumpDino()">
+                <div class="dino-score" id="dinoScore">Счет: 0</div>
+                <div id="dino"></div>
+                <div id="cactus"></div>
+            </div>
+            <p style="font-size: 0.75em; color: #aaa; text-align: center;">Кликайте по игре или нажимайте Пробел для прыжка!</p>
+            <div class="links" style="justify-content: center;">
+                <a onclick="showForm('loginForm')">← Назад к входу</a>
+            </div>
         </div>
 
-        <!-- 5. Главный экран -->
+        <!-- 5. Главный экран (Личный кабинет) -->
         <div class="form-box hidden" id="dashboardForm">
             <div class="tab-content active" id="tabHome">
                 <h2>Главная</h2>
                 <p style="color: #ccc; font-size: 0.9em;">Система защиты кольца активна.</p>
             </div>
 
-            <div class="tab-content" id="tabLikes">
-                <h2>Избранное</h2>
-                <p style="color: #aaa; font-size: 0.9em;">Здесь пока пусто.</p>
+            <div class="tab-content" id="tabGameTab">
+                <h2>Мини-игра</h2>
+                <div class="dino-container" onclick="jumpDino()">
+                    <div class="dino-score" id="dinoScoreDashboard">Счет: 0</div>
+                    <div id="dinoDash" style="width: 25px; height: 35px; position: absolute; bottom: 0; left: 20px; background: #00ff64; border-radius: 4px;"></div>
+                    <div id="cactusDash" style="width: 15px; height: 30px; position: absolute; bottom: 0; left: 300px; background: #ff3333; border-radius: 4px;"></div>
+                </div>
+                <p style="font-size: 0.7em; color: #aaa;">Клик или Пробел для прыжка</p>
             </div>
 
             <div class="tab-content" id="tabAdd">
@@ -395,17 +468,16 @@
         </div>
     </div>
 
-    <!-- Нижняя панель навигации -->
+    <!-- Нижняя панель навигации (в личным кабинете) -->
     <div class="nav-container hidden" id="bottomNav">
         <div class="nav-indicator" id="navIndicator"></div>
         <a class="nav-item active" onclick="switchTab(0, 'tabHome', event)">🏠</a>
-        <a class="nav-item" onclick="switchTab(1, 'tabLikes', event)">❤️</a>
+        <a class="nav-item" onclick="switchTab(1, 'tabGameTab', event)">🎮</a>
         <a class="nav-item" onclick="switchTab(2, 'tabAdd', event)">➕</a>
         <a class="nav-item" onclick="switchTab(3, 'tabProfile', event)">👤</a>
         <a class="nav-item" onclick="switchTab(4, 'tabNotif', event)">🔔</a>
     </div>
 
-    <!-- Весь JavaScript код прямо внутри HTML -->
     <script>
         const PUBLIC_KEY = "3tBhcAhR36wwX15C6";
         const SERVICE_ID = "service_m4kte6u"; 
@@ -415,37 +487,57 @@
 
         let generatedCode = null;
         let currentUser = { name: '', email: '' };
+        let flowType = 'signup';
 
         function showForm(formId) {
             document.getElementById('loginForm').classList.add('hidden');
             document.getElementById('signupForm').classList.add('hidden');
             document.getElementById('verifyForm').classList.add('hidden');
             document.getElementById('forgotForm').classList.add('hidden');
+            document.getElementById('gameForm').classList.add('hidden');
             document.getElementById('dashboardForm').classList.add('hidden');
             document.getElementById('bottomNav').classList.add('hidden');
             
             document.getElementById(formId).classList.remove('hidden');
+            if(formId === 'gameForm') startDinoGame();
         }
 
-        function sendEmailCode(e) {
+        function sendEmailCode(e, type) {
             if (e) e.preventDefault();
+            flowType = type;
 
-            const username = document.getElementById('signupUser').value.trim() || 'Пользователь';
-            const email = document.getElementById('signupEmail').value.trim();
+            let email = '';
+            let formElement = null;
+
+            if (flowType === 'signup') {
+                currentUser.name = document.getElementById('signupUser').value.trim() || 'Пользователь';
+                email = document.getElementById('signupEmail').value.trim();
+                currentUser.email = email;
+
+                generatedCode = Math.floor(100000 + Math.random() * 900000).toString();
+                document.getElementById('hiddenEmail').value = email;
+                document.getElementById('hiddenCode').value = generatedCode;
+                formElement = document.getElementById('signupForm');
+            } else {
+                email = document.getElementById('forgotEmail').value.trim();
+                currentUser.email = email;
+                currentUser.name = 'Пользователь';
+
+                generatedCode = Math.floor(100000 + Math.random() * 900000).toString();
+                document.getElementById('forgotHiddenEmail').value = email;
+                document.getElementById('forgotHiddenCode').value = generatedCode;
+                formElement = document.getElementById('forgotForm');
+            }
 
             if (!email) return;
 
-            currentUser.name = username;
-            currentUser.email = email;
+            if (flowType === 'forgot') {
+                document.getElementById('newPasswordWrapper').style.display = 'block';
+            } else {
+                document.getElementById('newPasswordWrapper').style.display = 'none';
+            }
 
-            generatedCode = Math.floor(100000 + Math.random() * 900000).toString();
-
-            document.getElementById('hiddenEmail').value = email;
-            document.getElementById('hiddenCode').value = generatedCode;
-
-            const signupFormEl = document.getElementById('signupForm');
-
-            emailjs.sendForm(SERVICE_ID, TEMPLATE_ID, signupFormEl)
+            emailjs.sendForm(SERVICE_ID, TEMPLATE_ID, formElement)
                 .then(() => {
                     const statusText = document.getElementById('verifyStatus');
                     statusText.innerText = 'Код успешно отправлен на вашу почту';
@@ -465,7 +557,11 @@
         }
 
         function resendCode() {
-            sendEmailCode(null);
+            if (flowType === 'signup') {
+                sendEmailCode(null, 'signup');
+            } else {
+                sendEmailCode(null, 'forgot');
+            }
         }
 
         function verifyCode() {
@@ -473,7 +569,19 @@
             const statusText = document.getElementById('verifyStatus');
 
             if (inputVal === generatedCode) {
-                openDashboard(currentUser.name, currentUser.email);
+                if (flowType === 'forgot') {
+                    const newPass = document.getElementById('newPasswordInput').value.trim();
+                    if (!newPass) {
+                        statusText.innerText = 'Введите новый пароль!';
+                        statusText.classList.add('error');
+                        statusText.style.display = 'block';
+                        return;
+                    }
+                    alert('Пароль успешно изменен!');
+                    showForm('loginForm');
+                } else {
+                    openDashboard(currentUser.name, currentUser.email);
+                }
             } else {
                 statusText.innerText = 'Неверный код! Попробуйте еще раз.';
                 statusText.classList.add('error');
@@ -494,11 +602,12 @@
             document.getElementById('signupForm').classList.add('hidden');
             document.getElementById('verifyForm').classList.add('hidden');
             document.getElementById('forgotForm').classList.add('hidden');
+            document.getElementById('gameForm').classList.add('hidden');
             
             document.getElementById('dashboardForm').classList.remove('hidden');
             document.getElementById('bottomNav').classList.remove('hidden');
 
-            switchTab(3, 'tabProfile');
+            switchTab(3, 'tabProfile', null);
         }
 
         function switchTab(index, tabId, event) {
@@ -513,7 +622,11 @@
             items[index].classList.add('active');
 
             const indicator = document.getElementById('navIndicator');
-            indicator.style.left = (22 + (index * 58)) + 'px';
+            indicator.style.left = (15 + (index * 60)) + 'px';
+
+            if (tabId === 'tabGameTab') {
+                startDinoGame();
+            }
         }
 
         function logout() {
@@ -522,6 +635,81 @@
             document.getElementById('verifyStatus').style.display = 'none';
             document.getElementById('bottomNav').classList.add('hidden');
             showForm('loginForm');
+        }
+
+        // --- ЛОГИКА ИГРЫ ДИНОЗАВР ---
+        let dinoInterval = null;
+        let score = 0;
+
+        function jumpDino() {
+            const activeForm = document.getElementById('gameForm');
+            const activeTab = document.getElementById('tabGameTab');
+            
+            let currentDino = null;
+            if (!activeForm.classList.contains('hidden')) {
+                currentDino = document.getElementById('dino');
+            } else if (activeTab.classList.contains('active')) {
+                currentDino = document.getElementById('dinoDash');
+            }
+
+            if (currentDino && !currentDino.classList.contains('jump')) {
+                currentDino.classList.add('jump');
+                setTimeout(() => {
+                    currentDino.classList.remove('jump');
+                }, 400);
+            }
+        }
+
+        document.addEventListener('keydown', function(e) {
+            if (e.code === 'Space') {
+                e.preventDefault();
+                jumpDino();
+            }
+        });
+
+        function startDinoGame() {
+            if (dinoInterval) clearInterval(dinoInterval);
+            score = 0;
+
+            dinoInterval = setInterval(function() {
+                const activeForm = document.getElementById('gameForm');
+                const activeTab = document.getElementById('tabGameTab');
+
+                let d = null;
+                let c = null;
+                let sEl = null;
+
+                if (!activeForm.classList.contains('hidden')) {
+                    d = document.getElementById('dino');
+                    c = document.getElementById('cactus');
+                    sEl = document.getElementById('dinoScore');
+                } else if (activeTab.classList.contains('active')) {
+                    d = document.getElementById('dinoDash');
+                    c = document.getElementById('cactusDash');
+                    sEl = document.getElementById('dinoScoreDashboard');
+                }
+
+                if (!d || !c) return;
+
+                let cactusLeft = parseInt(window.getComputedStyle(c).getPropertyValue('left'));
+                let dinoBottom = parseInt(window.getComputedStyle(d).getPropertyValue('bottom'));
+
+                // Движение кактуса
+                if (cactusLeft < -20) {
+                    c.style.left = '320px';
+                    score++;
+                    if (sEl) sEl.innerText = 'Счет: ' + score;
+                } else {
+                    c.style.left = (cactusLeft - 6) + 'px';
+                }
+
+                // Проверка столкновения
+                if (cactusLeft > 15 && cactusLeft < 35 && dinoBottom < 20) {
+                    score = 0;
+                    if (sEl) sEl.innerText = 'Счет: 0 (Врезался!)';
+                    c.style.left = '320px';
+                }
+            }, 20);
         }
     </script>
 </body>
