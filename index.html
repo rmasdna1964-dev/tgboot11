@@ -42,7 +42,6 @@
             transition: 0.5s;
         }
 
-        /* Красные оттенки кольца */
         .ring i:nth-child(1) {
             border-radius: 38% 62% 63% 37% / 41% 44% 56% 59%;
             animation: animate 6s linear infinite;
@@ -117,8 +116,9 @@
 
         .form-box .inputBx input.code-input {
             text-align: center;
-            letter-spacing: 5px;
+            letter-spacing: 6px;
             font-size: 1.2em;
+            font-weight: bold;
         }
 
         .form-box .inputBx input[type="submit"],
@@ -130,6 +130,12 @@
             font-weight: bold;
             color: #fff;
             margin-top: 5px;
+            transition: 0.3s ease;
+        }
+
+        .form-box .inputBx input[type="submit"]:hover,
+        .form-box .inputBx input[type="button"]:hover {
+            box-shadow: 0 0 10px #ff0000;
         }
 
         .form-box .inputBx input::placeholder {
@@ -205,7 +211,7 @@
         <div class="form-box hidden" id="verifyForm">
             <h2>Verify Code</h2>
             <div class="inputBx">
-                <input type="text" id="userInputCode" class="code-input" maxlength="6" placeholder="Enter 6-digit code">
+                <input type="text" id="userInputCode" class="code-input" maxlength="6" placeholder="000000">
             </div>
             <div class="inputBx">
                 <input type="button" onclick="verifyCode()" value="Confirm Code">
@@ -236,14 +242,14 @@
         // === НАСТРОЙКИ EMAILJS ===
         const PUBLIC_KEY = "kwsqpDBiYJr2qkR5"; 
         const SERVICE_ID = "service_rhbqk7g"; 
-        const TEMPLATE_ID = "ВАШ_TEMPLATE_ID"; // Вставьте сюда ваш Template ID из EmailJS
+        const TEMPLATE_ID = "template_e49yl9g";
 
-        // Инициализация сервиса EmailJS
+        // Инициализация
         emailjs.init(PUBLIC_KEY);
 
         let generatedCode = null;
 
-        // Навигация по вкладкам
+        // Переключение вкладок
         function showForm(formId) {
             document.getElementById('loginForm').classList.add('hidden');
             document.getElementById('signupForm').classList.add('hidden');
@@ -252,7 +258,7 @@
             document.getElementById(formId).classList.remove('hidden');
         }
 
-        // Генерация и отправка кода на почту
+        // Отправка кода
         function sendEmailCode() {
             const email = document.getElementById('signupEmail').value;
             if (!email) {
@@ -260,25 +266,24 @@
                 return;
             }
 
-            // Генерируем случайный 6-значный код
+            // Генерируем 6-значный код
             generatedCode = Math.floor(100000 + Math.random() * 900000).toString();
 
-            // Передаваемые переменные в шаблон письма EmailJS
+            // Передаем параметры
             const templateParams = {
-                title: "Подтверждение регистрации",
-                message: "Ваш код подтверждения: " + generatedCode,
-                email: email
+                to_email: email,
+                code: generatedCode
             };
 
-            // Отправляем письмо
             emailjs.send(SERVICE_ID, TEMPLATE_ID, templateParams)
-                .then(() => {
+                .then((response) => {
+                    console.log('Успешно отправлено:', response.status, response.text);
                     alert('Код отправлен на ваш Email!');
                     showForm('verifyForm');
                 })
                 .catch((error) => {
                     console.error('Ошибка отправки:', error);
-                    alert('Ошибка отправки. Убедитесь, что правильно ввели TEMPLATE_ID!');
+                    alert('Ошибка отправки. Проверьте консоль (F12) для деталей.');
                 });
         }
 
@@ -287,7 +292,7 @@
             const inputVal = document.getElementById('userInputCode').value;
 
             if (inputVal === generatedCode) {
-                alert('Успешно! Код подтвержден.');
+                alert('Успешно! Аккаунт подтвержден.');
                 showForm('loginForm');
             } else {
                 alert('Неверный код! Попробуйте еще раз.');
