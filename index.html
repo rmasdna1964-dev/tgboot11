@@ -274,7 +274,7 @@
             </div>
         </div>
 
-        <!-- Dashboard (После авторизации) -->
+        <!-- Dashboard -->
         <div class="form-box hidden" id="dashboardForm">
             <div class="avatar">👤</div>
             <h2 id="displayUsername">User</h2>
@@ -285,9 +285,10 @@
     </div>
 
     <script>
+        // Обновленные настройки с template_osjbntn
         const PUBLIC_KEY = "3tBhcAhR36wwX15C6";
         const SERVICE_ID = "service_rhbqk7g";
-        const TEMPLATE_ID = "template_e49yl9g";
+        const TEMPLATE_ID = "template_osjbntn";
 
         emailjs.init(PUBLIC_KEY);
 
@@ -331,7 +332,7 @@
                 })
                 .catch((error) => {
                     console.error('Ошибка EmailJS:', error);
-                    alert('Ошибка отправки. Проверьте консоль.');
+                    alert('Ошибка отправки. Подробности в консоли (F12).');
                 });
         }
 
