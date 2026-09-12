@@ -239,8 +239,8 @@
     </div>
 
     <script>
-        // Инициализация EmailJS
-        const PUBLIC_KEY = "kwsqpDBiYJr2qkR5";
+        // Инициализация EmailJS с новым публичным ключом
+        const PUBLIC_KEY = "3tBhcAhR36wwX15C6";
         const SERVICE_ID = "service_rhbqk7g";
         const TEMPLATE_ID = "template_e49yl9g";
 
@@ -268,7 +268,6 @@
             // Генерируем 6-значный код
             generatedCode = Math.floor(100000 + Math.random() * 900000).toString();
 
-            // Дублируем ключи, чтобы избежать ошибки 400 при любых настройках шаблона
             const templateParams = {
                 to_email: email,
                 email: email,
