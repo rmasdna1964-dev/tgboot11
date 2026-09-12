@@ -1,116 +1,528 @@
-const PUBLIC_KEY = "3tBhcAhR36wwX15C6";
-const SERVICE_ID = "service_m4kte6u"; 
-const TEMPLATE_ID = "template_osjbntn";
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RingAuth App</title>
 
-emailjs.init(PUBLIC_KEY);
+    <!-- EmailJS SDK -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
 
-let generatedCode = null;
-let currentUser = { name: '', email: '' };
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: sans-serif;
+        }
 
-function showForm(formId) {
-    document.getElementById('loginForm').classList.add('hidden');
-    document.getElementById('signupForm').classList.add('hidden');
-    document.getElementById('verifyForm').classList.add('hidden');
-    document.getElementById('forgotForm').classList.add('hidden');
-    document.getElementById('dashboardForm').classList.add('hidden');
-    document.getElementById('bottomNav').classList.add('hidden');
-    
-    document.getElementById(formId).classList.remove('hidden');
-}
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: #111;
+            width: 100%;
+            overflow: hidden;
+            position: relative;
+        }
 
-function sendEmailCode(e) {
-    if (e) e.preventDefault();
+        .ring {
+            position: relative;
+            width: 500px;
+            height: 500px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
 
-    const username = document.getElementById('signupUser').value.trim() || 'Пользователь';
-    const email = document.getElementById('signupEmail').value.trim();
+        .ring i {
+            position: absolute;
+            inset: 0;
+            border: 2px solid #fff;
+            transition: 0.5s;
+        }
 
-    if (!email) return;
+        .ring i:nth-child(1) {
+            border-radius: 38% 62% 63% 37% / 41% 44% 56% 59%;
+            animation: animate 6s linear infinite;
+            --clr: #ff0000;
+        }
 
-    currentUser.name = username;
-    currentUser.email = email;
+        .ring i:nth-child(2) {
+            border-radius: 41% 44% 56% 59% / 38% 62% 63% 37%;
+            animation: animate 4s linear infinite;
+            --clr: #ff3333;
+        }
 
-    generatedCode = Math.floor(100000 + Math.random() * 900000).toString();
+        .ring i:nth-child(3) {
+            border-radius: 41% 44% 56% 59% / 38% 62% 63% 37%;
+            animation: animate2 10s linear infinite;
+            --clr: #cc0000;
+        }
 
-    document.getElementById('hiddenEmail').value = email;
-    document.getElementById('hiddenCode').value = generatedCode;
+        .ring:hover i {
+            border: 6px solid var(--clr);
+            filter: drop-shadow(0 0 20px var(--clr));
+        }
 
-    const signupFormEl = document.getElementById('signupForm');
+        @keyframes animate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
 
-    emailjs.sendForm(SERVICE_ID, TEMPLATE_ID, signupFormEl)
-        .then(() => {
+        @keyframes animate2 {
+            0% { transform: rotate(360deg); }
+            100% { transform: rotate(0deg); }
+        }
+
+        .form-box {
+            position: absolute;
+            width: 300px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            gap: 15px;
+            transition: 0.3s ease;
+            color: #fff;
+            z-index: 10;
+        }
+
+        .form-box.hidden {
+            display: none;
+        }
+
+        .form-box h2 {
+            font-size: 1.8em;
+            color: #fff;
+            text-align: center;
+        }
+
+        .form-box .inputBx {
+            position: relative;
+            width: 100%;
+        }
+
+        .form-box .inputBx input {
+            position: relative;
+            width: 100%;
+            padding: 12px 20px;
+            background: transparent;
+            border: 2px solid #fff;
+            border-radius: 40px;
+            font-size: 1em;
+            color: #fff;
+            box-shadow: none;
+            outline: none;
+        }
+
+        .form-box .inputBx input.code-input {
+            text-align: center;
+            letter-spacing: 6px;
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+
+        .form-box .inputBx input[type="submit"],
+        .form-box .inputBx input[type="button"],
+        .btn-logout {
+            width: 100%;
+            background: linear-gradient(45deg, #ff0000, #ff5555);
+            border: none;
+            border-radius: 40px;
+            padding: 12px 20px;
+            cursor: pointer;
+            font-weight: bold;
+            color: #fff;
+            margin-top: 5px;
+            transition: 0.3s ease;
+            font-size: 1em;
+        }
+
+        .form-box .inputBx input[type="submit"]:hover,
+        .form-box .inputBx input[type="button"]:hover,
+        .btn-logout:hover {
+            box-shadow: 0 0 10px #ff0000;
+        }
+
+        .form-box .inputBx input::placeholder {
+            color: rgba(255, 255, 255, 0.75);
+        }
+
+        .form-box .links {
+            position: relative;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 10px;
+        }
+
+        .form-box .links a {
+            color: #fff;
+            text-decoration: none;
+            font-size: 0.85em;
+            cursor: pointer;
+        }
+
+        .form-box .links a:hover {
+            text-decoration: underline;
+        }
+
+        .status-msg {
+            color: #00ff64;
+            font-size: 0.85em;
+            text-align: center;
+            text-shadow: 0 0 8px rgba(0, 255, 100, 0.6);
+            display: none;
+            line-height: 1.3;
+        }
+
+        .status-msg.error {
+            color: #ff3333;
+            text-shadow: 0 0 8px rgba(255, 51, 51, 0.6);
+        }
+
+        /* Личный кабинет */
+        .avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: 2px solid #ff0000;
+            box-shadow: 0 0 15px rgba(255, 0, 0, 0.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.8em;
+            background: #1a1a1a;
+        }
+
+        .status-badge {
+            background: rgba(0, 255, 100, 0.15);
+            border: 1px solid #00ff64;
+            color: #00ff64;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.75em;
+            letter-spacing: 1px;
+        }
+
+        .user-email {
+            font-size: 0.8em;
+            color: #aaa;
+            word-break: break-all;
+            text-align: center;
+        }
+
+        .tab-content {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            text-align: center;
+            width: 100%;
+        }
+
+        .tab-content.active {
+            display: flex;
+        }
+
+        /* Нижняя панель навигации */
+        .nav-container {
+            position: absolute;
+            bottom: 40px;
+            width: 320px;
+            height: 65px;
+            background: #1b1b1b;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 0 15px;
+            z-index: 100;
+            transition: 0.3s ease;
+        }
+
+        .nav-container.hidden {
+            display: none;
+        }
+
+        .nav-item {
+            position: relative;
+            width: 45px;
+            height: 45px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 1.3em;
+            color: #fff;
+            opacity: 0.5;
+            transition: 0.4s;
+        }
+
+        .nav-item.active {
+            opacity: 1;
+            color: #ff0000;
+            text-shadow: 0 0 15px #ff0000;
+        }
+
+        .nav-indicator {
+            position: absolute;
+            top: 0;
+            left: 22px;
+            width: 25px;
+            height: 4px;
+            background: #fff;
+            border-radius: 2px;
+            box-shadow: 0 0 10px #fff, 0 0 20px #ff0000;
+            transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+    </style>
+</head>
+<body>
+    <div class="ring">
+        <i></i>
+        <i></i>
+        <i></i>
+
+        <!-- 1. Форма Входа -->
+        <div class="form-box" id="loginForm">
+            <h2>Вход</h2>
+            <div class="inputBx">
+                <input type="text" id="loginUser" placeholder="Имя пользователя">
+            </div>
+            <div class="inputBx">
+                <input type="password" placeholder="Пароль">
+            </div>
+            <div class="inputBx">
+                <input type="button" onclick="loginDirectly()" value="Войти">
+            </div>
+            <div class="links">
+                <a onclick="showForm('forgotForm')">Забыли пароль?</a>
+                <a onclick="showForm('signupForm')">Регистрация</a>
+            </div>
+        </div>
+
+        <!-- 2. Форма Регистрации -->
+        <form class="form-box hidden" id="signupForm" onsubmit="sendEmailCode(event)">
+            <h2>Регистрация</h2>
+            <div class="inputBx">
+                <input type="text" id="signupUser" placeholder="Имя пользователя">
+            </div>
+            <div class="inputBx">
+                <input type="email" id="signupEmail" name="to_email" placeholder="Email" required>
+                <input type="hidden" name="email" id="hiddenEmail">
+                <input type="hidden" name="code" id="hiddenCode">
+            </div>
+            <div class="inputBx">
+                <input type="password" placeholder="Пароль">
+            </div>
+            <div class="inputBx">
+                <input type="submit" value="Зарегистрироваться">
+            </div>
+            <div class="links">
+                <a onclick="showForm('loginForm')">Уже есть аккаунт?</a>
+            </div>
+        </form>
+
+        <!-- 3. Форма Подтверждения по Email -->
+        <div class="form-box hidden" id="verifyForm">
+            <h2>Подтверждение</h2>
+            <p class="status-msg" id="verifyStatus">Код успешно отправлен на вашу почту</p>
+            <div class="inputBx">
+                <input type="text" id="userInputCode" class="code-input" maxlength="6" placeholder="000000">
+            </div>
+            <div class="inputBx">
+                <input type="button" onclick="verifyCode()" value="Подтвердить">
+            </div>
+            <div class="links">
+                <a onclick="showForm('signupForm')">Назад</a>
+                <a onclick="resendCode()">Отправить снова</a>
+            </div>
+        </div>
+
+        <!-- 4. Форма Сброса пароля -->
+        <div class="form-box hidden" id="forgotForm">
+            <h2>Сброс пароля</h2>
+            <div class="inputBx">
+                <input type="email" placeholder="Введите ваш Email">
+            </div>
+            <div class="inputBx">
+                <input type="submit" value="Отправить ссылку" onclick="showForm('loginForm'); alert('Ссылка для сброса отправлена!');">
+            </div>
+            <div class="links">
+                <a onclick="showForm('loginForm')">Войти</a>
+                <a onclick="showForm('signupForm')">Регистрация</a>
+            </div>
+        </div>
+
+        <!-- 5. Главный экран -->
+        <div class="form-box hidden" id="dashboardForm">
+            <div class="tab-content active" id="tabHome">
+                <h2>Главная</h2>
+                <p style="color: #ccc; font-size: 0.9em;">Система защиты кольца активна.</p>
+            </div>
+
+            <div class="tab-content" id="tabLikes">
+                <h2>Избранное</h2>
+                <p style="color: #aaa; font-size: 0.9em;">Здесь пока пусто.</p>
+            </div>
+
+            <div class="tab-content" id="tabAdd">
+                <h2>Новый пост</h2>
+                <div class="inputBx">
+                    <input type="text" placeholder="Текст записи...">
+                </div>
+                <button class="btn-logout" style="margin-top:0;" onclick="alert('Успешно опубликовано!')">Опубликовать</button>
+            </div>
+
+            <div class="tab-content" id="tabProfile">
+                <div class="avatar">👤</div>
+                <h2 id="displayUsername" style="font-size: 1.4em;">User</h2>
+                <div class="status-badge">● VERIFIED</div>
+                <p class="user-email" id="displayEmail">email@example.com</p>
+                <button class="btn-logout" onclick="logout()">Выйти</button>
+            </div>
+
+            <div class="tab-content" id="tabNotif">
+                <h2>Уведомления</h2>
+                <p style="color: #00ff64; font-size: 0.85em;">• Авторизация прошла успешно</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Нижняя панель навигации -->
+    <div class="nav-container hidden" id="bottomNav">
+        <div class="nav-indicator" id="navIndicator"></div>
+        <a class="nav-item active" onclick="switchTab(0, 'tabHome', event)">🏠</a>
+        <a class="nav-item" onclick="switchTab(1, 'tabLikes', event)">❤️</a>
+        <a class="nav-item" onclick="switchTab(2, 'tabAdd', event)">➕</a>
+        <a class="nav-item" onclick="switchTab(3, 'tabProfile', event)">👤</a>
+        <a class="nav-item" onclick="switchTab(4, 'tabNotif', event)">🔔</a>
+    </div>
+
+    <!-- Весь JavaScript код прямо внутри HTML -->
+    <script>
+        const PUBLIC_KEY = "3tBhcAhR36wwX15C6";
+        const SERVICE_ID = "service_m4kte6u"; 
+        const TEMPLATE_ID = "template_osjbntn";
+
+        emailjs.init(PUBLIC_KEY);
+
+        let generatedCode = null;
+        let currentUser = { name: '', email: '' };
+
+        function showForm(formId) {
+            document.getElementById('loginForm').classList.add('hidden');
+            document.getElementById('signupForm').classList.add('hidden');
+            document.getElementById('verifyForm').classList.add('hidden');
+            document.getElementById('forgotForm').classList.add('hidden');
+            document.getElementById('dashboardForm').classList.add('hidden');
+            document.getElementById('bottomNav').classList.add('hidden');
+            
+            document.getElementById(formId).classList.remove('hidden');
+        }
+
+        function sendEmailCode(e) {
+            if (e) e.preventDefault();
+
+            const username = document.getElementById('signupUser').value.trim() || 'Пользователь';
+            const email = document.getElementById('signupEmail').value.trim();
+
+            if (!email) return;
+
+            currentUser.name = username;
+            currentUser.email = email;
+
+            generatedCode = Math.floor(100000 + Math.random() * 900000).toString();
+
+            document.getElementById('hiddenEmail').value = email;
+            document.getElementById('hiddenCode').value = generatedCode;
+
+            const signupFormEl = document.getElementById('signupForm');
+
+            emailjs.sendForm(SERVICE_ID, TEMPLATE_ID, signupFormEl)
+                .then(() => {
+                    const statusText = document.getElementById('verifyStatus');
+                    statusText.innerText = 'Код успешно отправлен на вашу почту';
+                    statusText.classList.remove('error');
+                    statusText.style.display = 'block';
+
+                    showForm('verifyForm');
+                })
+                .catch((error) => {
+                    console.error('Ошибка EmailJS:', error);
+                    const statusText = document.getElementById('verifyStatus');
+                    statusText.innerText = 'Ошибка отправки кода';
+                    statusText.classList.add('error');
+                    statusText.style.display = 'block';
+                    showForm('verifyForm');
+                });
+        }
+
+        function resendCode() {
+            sendEmailCode(null);
+        }
+
+        function verifyCode() {
+            const inputVal = document.getElementById('userInputCode').value.trim();
             const statusText = document.getElementById('verifyStatus');
-            statusText.innerText = 'Код успешно отправлен на вашу почту';
-            statusText.classList.remove('error');
-            statusText.style.display = 'block';
 
-            showForm('verifyForm');
-        })
-        .catch((error) => {
-            console.error('Ошибка EmailJS:', error);
-            const statusText = document.getElementById('verifyStatus');
-            statusText.innerText = 'Ошибка отправки кода';
-            statusText.classList.add('error');
-            statusText.style.display = 'block';
-            showForm('verifyForm');
-        });
-}
+            if (inputVal === generatedCode) {
+                openDashboard(currentUser.name, currentUser.email);
+            } else {
+                statusText.innerText = 'Неверный код! Попробуйте еще раз.';
+                statusText.classList.add('error');
+                statusText.style.display = 'block';
+            }
+        }
 
-function resendCode() {
-    sendEmailCode(null);
-}
+        function loginDirectly() {
+            const username = document.getElementById('loginUser').value.trim() || 'User';
+            openDashboard(username, 'Вход выполнен');
+        }
 
-function verifyCode() {
-    const inputVal = document.getElementById('userInputCode').value.trim();
-    const statusText = document.getElementById('verifyStatus');
+        function openDashboard(name, email) {
+            document.getElementById('displayUsername').innerText = name;
+            document.getElementById('displayEmail').innerText = email;
+            
+            document.getElementById('loginForm').classList.add('hidden');
+            document.getElementById('signupForm').classList.add('hidden');
+            document.getElementById('verifyForm').classList.add('hidden');
+            document.getElementById('forgotForm').classList.add('hidden');
+            
+            document.getElementById('dashboardForm').classList.remove('hidden');
+            document.getElementById('bottomNav').classList.remove('hidden');
 
-    if (inputVal === generatedCode) {
-        openDashboard(currentUser.name, currentUser.email);
-    } else {
-        statusText.innerText = 'Неверный код! Попробуйте еще раз.';
-        statusText.classList.add('error');
-        statusText.style.display = 'block';
-    }
-}
+            switchTab(3, 'tabProfile');
+        }
 
-function loginDirectly() {
-    const username = document.getElementById('loginUser').value.trim() || 'User';
-    openDashboard(username, 'Вход выполнен');
-}
+        function switchTab(index, tabId, event) {
+            if (event) event.preventDefault();
 
-function openDashboard(name, email) {
-    document.getElementById('displayUsername').innerText = name;
-    document.getElementById('displayEmail').innerText = email;
-    
-    document.getElementById('loginForm').classList.add('hidden');
-    document.getElementById('signupForm').classList.add('hidden');
-    document.getElementById('verifyForm').classList.add('hidden');
-    document.getElementById('forgotForm').classList.add('hidden');
-    
-    document.getElementById('dashboardForm').classList.remove('hidden');
-    document.getElementById('bottomNav').classList.remove('hidden');
+            const tabs = document.querySelectorAll('.tab-content');
+            tabs.forEach(t => t.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
 
-    switchTab(3, 'tabProfile');
-}
+            const items = document.querySelectorAll('.nav-item');
+            items.forEach(i => i.classList.remove('active'));
+            items[index].classList.add('active');
 
-function switchTab(index, tabId, event) {
-    if (event) event.preventDefault();
+            const indicator = document.getElementById('navIndicator');
+            indicator.style.left = (22 + (index * 58)) + 'px';
+        }
 
-    const tabs = document.querySelectorAll('.tab-content');
-    tabs.forEach(t => t.classList.remove('active'));
-    document.getElementById(tabId).classList.add('active');
-
-    const items = document.querySelectorAll('.nav-item');
-    items.forEach(i => i.classList.remove('active'));
-    items[index].classList.add('active');
-
-    const indicator = document.getElementById('navIndicator');
-    indicator.style.left = (22 + (index * 58)) + 'px';
-}
-
-function logout() {
-    document.getElementById('signupEmail').value = '';
-    document.getElementById('userInputCode').value = '';
-    document.getElementById('verifyStatus').style.display = 'none';
-    document.getElementById('bottomNav').classList.add('hidden');
-    showForm('loginForm');
-}
+        function logout() {
+            document.getElementById('signupEmail').value = '';
+            document.getElementById('userInputCode').value = '';
+            document.getElementById('verifyStatus').style.display = 'none';
+            document.getElementById('bottomNav').classList.add('hidden');
+            showForm('loginForm');
+        }
+    </script>
+</body>
+</html>
