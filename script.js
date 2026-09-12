@@ -1,20 +1,116 @@
-const links = document.querySelectorAll('.nav-link');
-const light = document.querySelector('.nav-light');
+const PUBLIC_KEY = "3tBhcAhR36wwX15C6";
+const SERVICE_ID = "service_m4kte6u"; 
+const TEMPLATE_ID = "template_osjbntn";
 
-function activeLink(linkActive) {
-    links.forEach(link => {
-        link.classList.remove('active');
-    });
-    linkActive.classList.add('active');
+emailjs.init(PUBLIC_KEY);
+
+let generatedCode = null;
+let currentUser = { name: '', email: '' };
+
+function showForm(formId) {
+    document.getElementById('loginForm').classList.add('hidden');
+    document.getElementById('signupForm').classList.add('hidden');
+    document.getElementById('verifyForm').classList.add('hidden');
+    document.getElementById('forgotForm').classList.add('hidden');
+    document.getElementById('dashboardForm').classList.add('hidden');
+    document.getElementById('bottomNav').classList.add('hidden');
+    
+    document.getElementById(formId).classList.remove('hidden');
 }
 
-links.forEach((item, index) => {
-    item.addEventListener('click', (e) => {
-        e.preventDefault();
-        activeLink(item);
-        
-        // Смещение белой плашки-индикатора при клике
-        // 70px — это примерный шаг для каждой иконки, подстройте под ваш CSS если нужно
-        light.style.transform = `translateX(${index * 70}px)`;
-    });
-});
+function sendEmailCode(e) {
+    if (e) e.preventDefault();
+
+    const username = document.getElementById('signupUser').value.trim() || 'Пользователь';
+    const email = document.getElementById('signupEmail').value.trim();
+
+    if (!email) return;
+
+    currentUser.name = username;
+    currentUser.email = email;
+
+    generatedCode = Math.floor(100000 + Math.random() * 900000).toString();
+
+    document.getElementById('hiddenEmail').value = email;
+    document.getElementById('hiddenCode').value = generatedCode;
+
+    const signupFormEl = document.getElementById('signupForm');
+
+    emailjs.sendForm(SERVICE_ID, TEMPLATE_ID, signupFormEl)
+        .then(() => {
+            const statusText = document.getElementById('verifyStatus');
+            statusText.innerText = 'Код успешно отправлен на вашу почту';
+            statusText.classList.remove('error');
+            statusText.style.display = 'block';
+
+            showForm('verifyForm');
+        })
+        .catch((error) => {
+            console.error('Ошибка EmailJS:', error);
+            const statusText = document.getElementById('verifyStatus');
+            statusText.innerText = 'Ошибка отправки кода. Проверьте Service ID.';
+            statusText.classList.add('error');
+            statusText.style.display = 'block';
+            showForm('verifyForm');
+        });
+}
+
+function resendCode() {
+    sendEmailCode(null);
+}
+
+function verifyCode() {
+    const inputVal = document.getElementById('userInputCode').value.trim();
+    const statusText = document.getElementById('verifyStatus');
+
+    if (inputVal === generatedCode) {
+        openDashboard(currentUser.name, currentUser.email);
+    } else {
+        statusText.innerText = 'Неверный код! Попробуйте еще раз.';
+        statusText.classList.add('error');
+        statusText.style.display = 'block';
+    }
+}
+
+function loginDirectly() {
+    const username = document.getElementById('loginUser').value.trim() || 'User';
+    openDashboard(username, 'Вход выполнен');
+}
+
+function openDashboard(name, email) {
+    document.getElementById('displayUsername').innerText = name;
+    document.getElementById('displayEmail').innerText = email;
+    
+    document.getElementById('loginForm').classList.add('hidden');
+    document.getElementById('signupForm').classList.add('hidden');
+    document.getElementById('verifyForm').classList.add('hidden');
+    document.getElementById('forgotForm').classList.add('hidden');
+    
+    document.getElementById('dashboardForm').classList.remove('hidden');
+    document.getElementById('bottomNav').classList.remove('hidden');
+
+    switchTab(3, 'tabProfile');
+}
+
+function switchTab(index, tabId, event) {
+    if (event) event.preventDefault();
+
+    const tabs = document.querySelectorAll('.tab-content');
+    tabs.forEach(t => t.classList.remove('active'));
+    document.getElementById(tabId).classList.add('active');
+
+    const items = document.querySelectorAll('.nav-item');
+    items.forEach(i => i.classList.remove('active'));
+    items[index].classList.add('active');
+
+    const indicator = document.getElementById('navIndicator');
+    indicator.style.left = (22 + (index * 58)) + 'px';
+}
+
+function logout() {
+    document.getElementById('signupEmail').value = '';
+    document.getElementById('userInputCode').value = '';
+    document.getElementById('verifyStatus').style.display = 'none';
+    document.getElementById('bottomNav').classList.add('hidden');
+    showForm('loginForm');
+}
