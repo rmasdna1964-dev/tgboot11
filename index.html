@@ -1,68 +1,272 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Рулетка Звезд</title>
+    <title>Telegram Animated Auth</title>
+
+    <!-- Telegram Web App SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #1c1c1e;
-            color: #ffffff;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
+        * {
             margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: sans-serif;
         }
-        .btn {
-            background-color: #0088cc;
-            color: white;
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: #111;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .ring {
+            position: relative;
+            width: 500px;
+            height: 500px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .ring i {
+            position: absolute;
+            inset: 0;
+            border: 2px solid #fff;
+            transition: 0.5s;
+        }
+
+        /* Красные оттенки кольца */
+        .ring i:nth-child(1) {
+            border-radius: 38% 62% 63% 37% / 41% 44% 56% 59%;
+            animation: animate 6s linear infinite;
+            --clr: #ff0000;
+        }
+
+        .ring i:nth-child(2) {
+            border-radius: 41% 44% 56% 59% / 38% 62% 63% 37%;
+            animation: animate 4s linear infinite;
+            --clr: #ff3333;
+        }
+
+        .ring i:nth-child(3) {
+            border-radius: 41% 44% 56% 59% / 38% 62% 63% 37%;
+            animation: animate2 10s linear infinite;
+            --clr: #cc0000;
+        }
+
+        .ring:hover i {
+            border: 6px solid var(--clr);
+            filter: drop-shadow(0 0 20px var(--clr));
+        }
+
+        @keyframes animate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes animate2 {
+            0% { transform: rotate(360deg); }
+            100% { transform: rotate(0deg); }
+        }
+
+        .form-box {
+            position: absolute;
+            width: 300px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            gap: 15px;
+            transition: 0.3s ease;
+        }
+
+        .form-box.hidden {
+            display: none;
+        }
+
+        .form-box h2 {
+            font-size: 1.8em;
+            color: #fff;
+            text-align: center;
+        }
+
+        .form-box .inputBx {
+            position: relative;
+            width: 100%;
+        }
+
+        .form-box .inputBx input {
+            position: relative;
+            width: 100%;
+            padding: 12px 20px;
+            background: transparent;
+            border: 2px solid #fff;
+            border-radius: 40px;
+            font-size: 1em;
+            color: #fff;
+            box-shadow: none;
+            outline: none;
+        }
+
+        .form-box .inputBx input.code-input {
+            text-align: center;
+            letter-spacing: 5px;
+            font-size: 1.2em;
+        }
+
+        .form-box .inputBx input[type="submit"],
+        .form-box .inputBx input[type="button"] {
+            width: 100%;
+            background: linear-gradient(45deg, #ff0000, #ff5555);
             border: none;
-            padding: 16px 32px;
-            font-size: 18px;
-            font-weight: bold;
-            border-radius: 12px;
             cursor: pointer;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+            font-weight: bold;
+            color: #fff;
+            margin-top: 5px;
         }
-        .btn:active {
-            transform: scale(0.96);
+
+        .form-box .inputBx input::placeholder {
+            color: rgba(255, 255, 255, 0.75);
+        }
+
+        .form-box .links {
+            position: relative;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 10px;
+        }
+
+        .form-box .links a {
+            color: #fff;
+            text-decoration: none;
+            font-size: 0.85em;
+            cursor: pointer;
+        }
+
+        .form-box .links a:hover {
+            text-decoration: underline;
         }
     </style>
 </head>
 <body>
+    <div class="ring">
+        <i></i>
+        <i></i>
+        <i></i>
 
-    <h1>🎰 Рулетка Звезд</h1>
-    <button class="btn" onclick="payInBot(5)">Крутить за 5 ⭐</button>
+        <!-- 1. Вход (Login) -->
+        <div class="form-box" id="loginForm">
+            <h2>Login</h2>
+            <div class="inputBx">
+                <input type="text" id="loginUsername" placeholder="Username">
+            </div>
+            <div class="inputBx">
+                <input type="password" placeholder="Password">
+            </div>
+            <div class="inputBx">
+                <input type="submit" value="Sign in">
+            </div>
+            <div class="links">
+                <a onclick="showForm('forgotForm')">Forgot Password?</a>
+                <a onclick="showForm('signupForm')">Signup</a>
+            </div>
+        </div>
+
+        <!-- 2. Регистрация (Signup) -->
+        <div class="form-box hidden" id="signupForm">
+            <h2>Signup</h2>
+            <div class="inputBx">
+                <input type="text" id="signupUsername" placeholder="Username">
+            </div>
+            <div class="inputBx">
+                <input type="email" id="signupEmail" placeholder="Email">
+            </div>
+            <div class="inputBx">
+                <input type="password" placeholder="Password">
+            </div>
+            <div class="inputBx">
+                <input type="button" onclick="handleRegister()" value="Register">
+            </div>
+            <div class="links">
+                <a onclick="showForm('loginForm')">Already have an account?</a>
+            </div>
+        </div>
+
+        <!-- 3. Подтверждение кода (Verify Code) -->
+        <div class="form-box hidden" id="verifyForm">
+            <h2>Verify Code</h2>
+            <div class="inputBx">
+                <input type="text" class="code-input" maxlength="6" placeholder="Enter 6-digit code">
+            </div>
+            <div class="inputBx">
+                <input type="button" onclick="handleConfirmCode()" value="Confirm Code">
+            </div>
+            <div class="links">
+                <a onclick="showForm('signupForm')">Back</a>
+                <a onclick="alert('New code sent!')">Resend Code</a>
+            </div>
+        </div>
+
+        <!-- 4. Восстановление пароля (Forgot Password) -->
+        <div class="form-box hidden" id="forgotForm">
+            <h2>Reset Password</h2>
+            <div class="inputBx">
+                <input type="email" placeholder="Enter your Email">
+            </div>
+            <div class="inputBx">
+                <input type="submit" value="Reset Link">
+            </div>
+            <div class="links">
+                <a onclick="showForm('loginForm')">Back to Login</a>
+                <a onclick="showForm('signupForm')">Signup</a>
+            </div>
+        </div>
+    </div>
 
     <script>
+        // Переключение между вкладками
+        function showForm(formId) {
+            document.getElementById('loginForm').classList.add('hidden');
+            document.getElementById('signupForm').classList.add('hidden');
+            document.getElementById('verifyForm').classList.add('hidden');
+            document.getElementById('forgotForm').classList.add('hidden');
+            document.getElementById(formId).classList.remove('hidden');
+        }
+
+        // Логика перехода по кнопкам
+        function handleRegister() {
+            showForm('verifyForm');
+        }
+
+        function handleConfirmCode() {
+            alert('Code confirmed successfully!');
+            showForm('loginForm');
+        }
+
+        // Инициализация Telegram Web App
         const tg = window.Telegram.WebApp;
+        tg.ready();
         tg.expand();
 
-        async function payInBot(starsCount) {
-            try {
-                // Делаем запрос к серверной функции на Vercel
-                const response = await fetch('/api/create-invoice', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ stars: starsCount })
-                });
+        // Если открыто внутри Telegram — подставляем данные юзера
+        const tgUser = tg.initDataUnsafe?.user;
+        if (tgUser) {
+            const username = tgUser.username || tgUser.first_name;
+            
+            const loginInput = document.getElementById('loginUsername');
+            const signupInput = document.getElementById('signupUsername');
 
-                const data = await response.json();
-
-                if (response.ok && data.invoice_url) {
-                    // Перенаправляем пользователя прямо к оплате в боте и закрываем Mini App
-                    tg.openTelegramLink(data.invoice_url);
-                    tg.close();
-                } else {
-                    alert('Ошибка выписки счета: ' + (data.error || JSON.stringify(data)));
-                }
-            } catch (e) {
-                alert('Ошибка соединения: ' + e.message);
-            }
+            if (loginInput) loginInput.value = username;
+            if (signupInput) signupInput.value = username;
         }
     </script>
 </body>
