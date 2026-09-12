@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Animated Auth Form</title>
+    <title>RingAuth App</title>
 
     <!-- EmailJS SDK -->
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
@@ -84,6 +84,7 @@
             flex-direction: column;
             gap: 15px;
             transition: 0.3s ease;
+            color: #fff;
         }
 
         .form-box.hidden {
@@ -122,19 +123,24 @@
         }
 
         .form-box .inputBx input[type="submit"],
-        .form-box .inputBx input[type="button"] {
+        .form-box .inputBx input[type="button"],
+        .btn-logout {
             width: 100%;
             background: linear-gradient(45deg, #ff0000, #ff5555);
             border: none;
+            border-radius: 40px;
+            padding: 12px 20px;
             cursor: pointer;
             font-weight: bold;
             color: #fff;
             margin-top: 5px;
             transition: 0.3s ease;
+            font-size: 1em;
         }
 
         .form-box .inputBx input[type="submit"]:hover,
-        .form-box .inputBx input[type="button"]:hover {
+        .form-box .inputBx input[type="button"]:hover,
+        .btn-logout:hover {
             box-shadow: 0 0 10px #ff0000;
         }
 
@@ -161,6 +167,37 @@
         .form-box .links a:hover {
             text-decoration: underline;
         }
+
+        /* Стиль кабинета */
+        .avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 2px solid #ff0000;
+            box-shadow: 0 0 15px rgba(255, 0, 0, 0.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2.2em;
+            background: #1a1a1a;
+        }
+
+        .status-badge {
+            background: rgba(0, 255, 100, 0.15);
+            border: 1px solid #00ff64;
+            color: #00ff64;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            letter-spacing: 1px;
+        }
+
+        .user-email {
+            font-size: 0.85em;
+            color: #aaa;
+            word-break: break-all;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
@@ -173,13 +210,13 @@
         <div class="form-box" id="loginForm">
             <h2>Вход</h2>
             <div class="inputBx">
-                <input type="text" placeholder="Имя пользователя">
+                <input type="text" id="loginUser" placeholder="Имя пользователя">
             </div>
             <div class="inputBx">
                 <input type="password" placeholder="Пароль">
             </div>
             <div class="inputBx">
-                <input type="submit" value="Войти">
+                <input type="button" onclick="loginDirectly()" value="Войти">
             </div>
             <div class="links">
                 <a onclick="showForm('forgotForm')">Забыли пароль?</a>
@@ -191,7 +228,7 @@
         <div class="form-box hidden" id="signupForm">
             <h2>Регистрация</h2>
             <div class="inputBx">
-                <input type="text" placeholder="Имя пользователя">
+                <input type="text" id="signupUser" placeholder="Имя пользователя">
             </div>
             <div class="inputBx">
                 <input type="email" id="signupEmail" placeholder="Email" required>
@@ -236,10 +273,18 @@
                 <a onclick="showForm('signupForm')">Регистрация</a>
             </div>
         </div>
+
+        <!-- Dashboard (После авторизации) -->
+        <div class="form-box hidden" id="dashboardForm">
+            <div class="avatar">👤</div>
+            <h2 id="displayUsername">User</h2>
+            <div class="status-badge">● VERIFIED</div>
+            <p class="user-email" id="displayEmail">email@example.com</p>
+            <button class="btn-logout" onclick="logout()">Выйти</button>
+        </div>
     </div>
 
     <script>
-        // Инициализация EmailJS с новым публичным ключом
         const PUBLIC_KEY = "3tBhcAhR36wwX15C6";
         const SERVICE_ID = "service_rhbqk7g";
         const TEMPLATE_ID = "template_e49yl9g";
@@ -247,25 +292,29 @@
         emailjs.init(PUBLIC_KEY);
 
         let generatedCode = null;
+        let currentUser = { name: '', email: '' };
 
         function showForm(formId) {
             document.getElementById('loginForm').classList.add('hidden');
             document.getElementById('signupForm').classList.add('hidden');
             document.getElementById('verifyForm').classList.add('hidden');
             document.getElementById('forgotForm').classList.add('hidden');
+            document.getElementById('dashboardForm').classList.add('hidden');
             document.getElementById(formId).classList.remove('hidden');
         }
 
         function sendEmailCode() {
-            const emailInput = document.getElementById('signupEmail');
-            const email = emailInput.value.trim();
+            const username = document.getElementById('signupUser').value.trim() || 'Пользователь';
+            const email = document.getElementById('signupEmail').value.trim();
 
             if (!email) {
                 alert('Пожалуйста, введите Email!');
                 return;
             }
 
-            // Генерируем 6-значный код
+            currentUser.name = username;
+            currentUser.email = email;
+
             generatedCode = Math.floor(100000 + Math.random() * 900000).toString();
 
             const templateParams = {
@@ -276,14 +325,13 @@
             };
 
             emailjs.send(SERVICE_ID, TEMPLATE_ID, templateParams)
-                .then((response) => {
-                    console.log('Успешная отправка:', response.status, response.text);
+                .then(() => {
                     alert('Код отправлен на ваш Email!');
                     showForm('verifyForm');
                 })
                 .catch((error) => {
                     console.error('Ошибка EmailJS:', error);
-                    alert('Ошибка отправки. Подробности в консоли.');
+                    alert('Ошибка отправки. Проверьте консоль.');
                 });
         }
 
@@ -291,11 +339,27 @@
             const inputVal = document.getElementById('userInputCode').value.trim();
 
             if (inputVal === generatedCode) {
-                alert('Успешно! Код подтверждён.');
-                showForm('loginForm');
+                openDashboard(currentUser.name, currentUser.email);
             } else {
                 alert('Неверный код! Попробуйте ещё раз.');
             }
+        }
+
+        function loginDirectly() {
+            const username = document.getElementById('loginUser').value.trim() || 'User';
+            openDashboard(username, 'Вход выполнен');
+        }
+
+        function openDashboard(name, email) {
+            document.getElementById('displayUsername').innerText = name;
+            document.getElementById('displayEmail').innerText = email;
+            showForm('dashboardForm');
+        }
+
+        function logout() {
+            document.getElementById('signupEmail').value = '';
+            document.getElementById('userInputCode').value = '';
+            showForm('loginForm');
         }
     </script>
 </body>
