@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Animated Auth Form</title>
 
-    <!-- Подключаем SDK EmailJS -->
+    <!-- EmailJS SDK -->
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
 
     <style>
@@ -169,7 +169,7 @@
         <i></i>
         <i></i>
 
-        <!-- 1. Вход (Login) -->
+        <!-- Login Form -->
         <div class="form-box" id="loginForm">
             <h2>Login</h2>
             <div class="inputBx">
@@ -187,14 +187,14 @@
             </div>
         </div>
 
-        <!-- 2. Регистрация (Signup) -->
+        <!-- Signup Form -->
         <div class="form-box hidden" id="signupForm">
             <h2>Signup</h2>
             <div class="inputBx">
                 <input type="text" placeholder="Username">
             </div>
             <div class="inputBx">
-                <input type="email" id="signupEmail" placeholder="Email">
+                <input type="email" id="signupEmail" placeholder="Email" required>
             </div>
             <div class="inputBx">
                 <input type="password" placeholder="Password">
@@ -207,7 +207,7 @@
             </div>
         </div>
 
-        <!-- 3. Подтверждение кода (Verify Code) -->
+        <!-- Verify Form -->
         <div class="form-box hidden" id="verifyForm">
             <h2>Verify Code</h2>
             <div class="inputBx">
@@ -222,7 +222,7 @@
             </div>
         </div>
 
-        <!-- 4. Восстановление пароля (Forgot Password) -->
+        <!-- Forgot Form -->
         <div class="form-box hidden" id="forgotForm">
             <h2>Reset Password</h2>
             <div class="inputBx">
@@ -239,12 +239,11 @@
     </div>
 
     <script>
-        // === НАСТРОЙКИ EMAILJS ===
-        const PUBLIC_KEY = "kwsqpDBiYJr2qkR5"; 
-        const SERVICE_ID = "service_rhbqk7g"; 
+        // Инициализация EmailJS
+        const PUBLIC_KEY = "kwsqpDBiYJr2qkR5";
+        const SERVICE_ID = "service_rhbqk7g";
         const TEMPLATE_ID = "template_e49yl9g";
 
-        // Инициализация
         emailjs.init(PUBLIC_KEY);
 
         let generatedCode = null;
@@ -258,18 +257,20 @@
             document.getElementById(formId).classList.remove('hidden');
         }
 
-        // Отправка кода
+        // Генерация и отправка письма
         function sendEmailCode() {
-            const email = document.getElementById('signupEmail').value;
+            const emailInput = document.getElementById('signupEmail');
+            const email = emailInput.value.trim();
+
             if (!email) {
                 alert('Пожалуйста, введите Email!');
                 return;
             }
 
-            // Генерируем 6-значный код
+            // Создаем 6-значный код
             generatedCode = Math.floor(100000 + Math.random() * 900000).toString();
 
-            // Передаем параметры
+            // Передаем параметры в шаблон EmailJS
             const templateParams = {
                 to_email: email,
                 code: generatedCode
@@ -277,25 +278,25 @@
 
             emailjs.send(SERVICE_ID, TEMPLATE_ID, templateParams)
                 .then((response) => {
-                    console.log('Успешно отправлено:', response.status, response.text);
+                    console.log('Успешная отправка:', response.status, response.text);
                     alert('Код отправлен на ваш Email!');
                     showForm('verifyForm');
                 })
                 .catch((error) => {
-                    console.error('Ошибка отправки:', error);
-                    alert('Ошибка отправки. Проверьте консоль (F12) для деталей.');
+                    console.error('Ошибка EmailJS:', error);
+                    alert('Ошибка отправки. Откройте консоль (F12) для просмотра подробностей.');
                 });
         }
 
-        // Проверка кода
+        // Проверка введенного кода
         function verifyCode() {
-            const inputVal = document.getElementById('userInputCode').value;
+            const inputVal = document.getElementById('userInputCode').value.trim();
 
             if (inputVal === generatedCode) {
-                alert('Успешно! Аккаунт подтвержден.');
+                alert('Успешно! Код подтверждён.');
                 showForm('loginForm');
             } else {
-                alert('Неверный код! Попробуйте еще раз.');
+                alert('Неверный код! Попробуйте ещё раз.');
             }
         }
     </script>
