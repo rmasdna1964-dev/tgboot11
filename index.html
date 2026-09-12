@@ -414,7 +414,7 @@
             </div>
         </form>
 
-        <!-- Окно с игрой Динозавр (доступно до входа) -->
+        <!-- Окно с игрой Динозавр -->
         <div class="form-box hidden" id="gameForm">
             <h2>Динозавр</h2>
             <div class="dino-container" onclick="jumpDino()">
@@ -468,7 +468,7 @@
         </div>
     </div>
 
-    <!-- Нижняя панель навигации (в личным кабинете) -->
+    <!-- Нижняя панель навигации -->
     <div class="nav-container hidden" id="bottomNav">
         <div class="nav-indicator" id="navIndicator"></div>
         <a class="nav-item active" onclick="switchTab(0, 'tabHome', event)">🏠</a>
@@ -479,7 +479,8 @@
     </div>
 
     <script>
-        const PUBLIC_KEY = "3tBhcAhR36wwX15C6";
+        // Использован ваш актуальный Public Key из EmailJS
+        const PUBLIC_KEY = "VLB99SaFJm5uLfqjB";
         const SERVICE_ID = "service_m4kte6u"; 
         const TEMPLATE_ID = "template_osjbntn";
 
@@ -694,7 +695,6 @@
                 let cactusLeft = parseInt(window.getComputedStyle(c).getPropertyValue('left'));
                 let dinoBottom = parseInt(window.getComputedStyle(d).getPropertyValue('bottom'));
 
-                // Движение кактуса
                 if (cactusLeft < -20) {
                     c.style.left = '320px';
                     score++;
@@ -703,7 +703,6 @@
                     c.style.left = (cactusLeft - 6) + 'px';
                 }
 
-                // Проверка столкновения
                 if (cactusLeft > 15 && cactusLeft < 35 && dinoBottom < 20) {
                     score = 0;
                     if (sEl) sEl.innerText = 'Счет: 0 (Врезался!)';
