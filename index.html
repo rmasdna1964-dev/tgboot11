@@ -171,69 +171,69 @@
 
         <!-- Login Form -->
         <div class="form-box" id="loginForm">
-            <h2>Login</h2>
+            <h2>Вход</h2>
             <div class="inputBx">
-                <input type="text" placeholder="Username">
+                <input type="text" placeholder="Имя пользователя">
             </div>
             <div class="inputBx">
-                <input type="password" placeholder="Password">
+                <input type="password" placeholder="Пароль">
             </div>
             <div class="inputBx">
-                <input type="submit" value="Sign in">
+                <input type="submit" value="Войти">
             </div>
             <div class="links">
-                <a onclick="showForm('forgotForm')">Forgot Password?</a>
-                <a onclick="showForm('signupForm')">Signup</a>
+                <a onclick="showForm('forgotForm')">Забыли пароль?</a>
+                <a onclick="showForm('signupForm')">Регистрация</a>
             </div>
         </div>
 
         <!-- Signup Form -->
         <div class="form-box hidden" id="signupForm">
-            <h2>Signup</h2>
+            <h2>Регистрация</h2>
             <div class="inputBx">
-                <input type="text" placeholder="Username">
+                <input type="text" placeholder="Имя пользователя">
             </div>
             <div class="inputBx">
                 <input type="email" id="signupEmail" placeholder="Email" required>
             </div>
             <div class="inputBx">
-                <input type="password" placeholder="Password">
+                <input type="password" placeholder="Пароль">
             </div>
             <div class="inputBx">
-                <input type="button" onclick="sendEmailCode()" value="Register">
+                <input type="button" onclick="sendEmailCode()" value="Зарегистрироваться">
             </div>
             <div class="links">
-                <a onclick="showForm('loginForm')">Already have an account?</a>
+                <a onclick="showForm('loginForm')">У вас уже есть аккаунт?</a>
             </div>
         </div>
 
         <!-- Verify Form -->
         <div class="form-box hidden" id="verifyForm">
-            <h2>Verify Code</h2>
+            <h2>Подтверждение</h2>
             <div class="inputBx">
                 <input type="text" id="userInputCode" class="code-input" maxlength="6" placeholder="000000">
             </div>
             <div class="inputBx">
-                <input type="button" onclick="verifyCode()" value="Confirm Code">
+                <input type="button" onclick="verifyCode()" value="Подтвердить">
             </div>
             <div class="links">
-                <a onclick="showForm('signupForm')">Back</a>
-                <a onclick="sendEmailCode()">Resend Code</a>
+                <a onclick="showForm('signupForm')">Назад</a>
+                <a onclick="sendEmailCode()">Отправить снова</a>
             </div>
         </div>
 
         <!-- Forgot Form -->
         <div class="form-box hidden" id="forgotForm">
-            <h2>Reset Password</h2>
+            <h2>Сброс пароля</h2>
             <div class="inputBx">
-                <input type="email" placeholder="Enter your Email">
+                <input type="email" placeholder="Введите ваш Email">
             </div>
             <div class="inputBx">
-                <input type="submit" value="Reset Link">
+                <input type="submit" value="Отправить ссылку">
             </div>
             <div class="links">
-                <a onclick="showForm('loginForm')">Back to Login</a>
-                <a onclick="showForm('signupForm')">Signup</a>
+                <a onclick="showForm('loginForm')">Вернуться во вход</a>
+                <a onclick="showForm('signupForm')">Регистрация</a>
             </div>
         </div>
     </div>
@@ -248,7 +248,6 @@
 
         let generatedCode = null;
 
-        // Переключение вкладок
         function showForm(formId) {
             document.getElementById('loginForm').classList.add('hidden');
             document.getElementById('signupForm').classList.add('hidden');
@@ -257,7 +256,6 @@
             document.getElementById(formId).classList.remove('hidden');
         }
 
-        // Генерация и отправка письма
         function sendEmailCode() {
             const emailInput = document.getElementById('signupEmail');
             const email = emailInput.value.trim();
@@ -267,12 +265,14 @@
                 return;
             }
 
-            // Создаем 6-значный код
+            // Генерируем 6-значный код
             generatedCode = Math.floor(100000 + Math.random() * 900000).toString();
 
-            // Передаем параметры в шаблон EmailJS
+            // Дублируем ключи, чтобы избежать ошибки 400 при любых настройках шаблона
             const templateParams = {
                 to_email: email,
+                email: email,
+                reply_to: email,
                 code: generatedCode
             };
 
@@ -284,11 +284,10 @@
                 })
                 .catch((error) => {
                     console.error('Ошибка EmailJS:', error);
-                    alert('Ошибка отправки. Откройте консоль (F12) для просмотра подробностей.');
+                    alert('Ошибка отправки. Подробности в консоли.');
                 });
         }
 
-        // Проверка введенного кода
         function verifyCode() {
             const inputVal = document.getElementById('userInputCode').value.trim();
 
