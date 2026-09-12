@@ -168,7 +168,6 @@
             text-decoration: underline;
         }
 
-        /* Стиль кабинета */
         .avatar {
             width: 80px;
             height: 80px;
@@ -224,25 +223,28 @@
             </div>
         </div>
 
-        <!-- Signup Form -->
-        <div class="form-box hidden" id="signupForm">
+        <!-- Signup Form (Обернута в <form id="emailForm">) -->
+        <form class="form-box hidden" id="signupForm" onsubmit="sendEmailCode(event)">
             <h2>Регистрация</h2>
             <div class="inputBx">
                 <input type="text" id="signupUser" placeholder="Имя пользователя">
             </div>
             <div class="inputBx">
-                <input type="email" id="signupEmail" placeholder="Email" required>
+                <!-- Обязательно name="to_email" и name="email" -->
+                <input type="email" id="signupEmail" name="to_email" placeholder="Email" required>
+                <input type="hidden" name="email" id="hiddenEmail">
+                <input type="hidden" name="code" id="hiddenCode">
             </div>
             <div class="inputBx">
                 <input type="password" placeholder="Пароль">
             </div>
             <div class="inputBx">
-                <input type="button" onclick="sendEmailCode()" value="Зарегистрироваться">
+                <input type="submit" value="Зарегистрироваться">
             </div>
             <div class="links">
                 <a onclick="showForm('loginForm')">У вас уже есть аккаунт?</a>
             </div>
-        </div>
+        </form>
 
         <!-- Verify Form -->
         <div class="form-box hidden" id="verifyForm">
@@ -255,7 +257,7 @@
             </div>
             <div class="links">
                 <a onclick="showForm('signupForm')">Назад</a>
-                <a onclick="sendEmailCode()">Отправить снова</a>
+                <a onclick="showForm('signupForm')">Отправить снова</a>
             </div>
         </div>
 
@@ -285,7 +287,6 @@
     </div>
 
     <script>
-        // Обновленные настройки с template_osjbntn
         const PUBLIC_KEY = "3tBhcAhR36wwX15C6";
         const SERVICE_ID = "service_rhbqk7g";
         const TEMPLATE_ID = "template_osjbntn";
@@ -304,7 +305,9 @@
             document.getElementById(formId).classList.remove('hidden');
         }
 
-        function sendEmailCode() {
+        function sendEmailCode(e) {
+            e.preventDefault(); // Предотвращаем перезагрузку страницы
+
             const username = document.getElementById('signupUser').value.trim() || 'Пользователь';
             const email = document.getElementById('signupEmail').value.trim();
 
@@ -318,21 +321,19 @@
 
             generatedCode = Math.floor(100000 + Math.random() * 900000).toString();
 
-            const templateParams = {
-                to_email: email,
-                email: email,
-                reply_to: email,
-                code: generatedCode
-            };
+            // Заполняем скрытые поля формы
+            document.getElementById('hiddenEmail').value = email;
+            document.getElementById('hiddenCode').value = generatedCode;
 
-            emailjs.send(SERVICE_ID, TEMPLATE_ID, templateParams)
+            // Отправляем форму целиком напрямую через sendForm
+            emailjs.sendForm(SERVICE_ID, TEMPLATE_ID, e.target)
                 .then(() => {
                     alert('Код отправлен на ваш Email!');
                     showForm('verifyForm');
                 })
                 .catch((error) => {
                     console.error('Ошибка EmailJS:', error);
-                    alert('Ошибка отправки. Подробности в консоли (F12).');
+                    alert('Ошибка отправки. Проверьте консоль.');
                 });
         }
 
