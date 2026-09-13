@@ -39,7 +39,9 @@
         .ring i {
             position: absolute;
             inset: 0;
-            border: 2px solid #fff;
+            /* Сделали линии сразу красными и светящимися постоянно */
+            border: 4px solid var(--clr);
+            filter: drop-shadow(0 0 15px var(--clr));
             transition: 0.5s;
         }
 
@@ -61,9 +63,10 @@
             --clr: #cc0000;
         }
 
+        /* При наведении они становятся еще толще и ярче */
         .ring:hover i {
-            border: 6px solid var(--clr);
-            filter: drop-shadow(0 0 20px var(--clr));
+            border: 7px solid var(--clr);
+            filter: drop-shadow(0 0 25px var(--clr));
         }
 
         @keyframes animate {
@@ -479,7 +482,6 @@
     </div>
 
     <script>
-        // Использован ваш актуальный Public Key из EmailJS
         const PUBLIC_KEY = "VLB99SaFJm5uLfqjB";
         const SERVICE_ID = "service_m4kte6u"; 
         const TEMPLATE_ID = "template_osjbntn";
