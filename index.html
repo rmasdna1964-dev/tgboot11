@@ -39,7 +39,7 @@
         .ring i {
             position: absolute;
             inset: 0;
-            /* Сделали линии сразу красными и светящимися постоянно */
+            /* Постоянное красное неоновое свечение */
             border: 4px solid var(--clr);
             filter: drop-shadow(0 0 15px var(--clr));
             transition: 0.5s;
@@ -63,7 +63,7 @@
             --clr: #cc0000;
         }
 
-        /* При наведении они становятся еще толще и ярче */
+        /* Усиление свечения при наведении мыши */
         .ring:hover i {
             border: 7px solid var(--clr);
             filter: drop-shadow(0 0 25px var(--clr));
