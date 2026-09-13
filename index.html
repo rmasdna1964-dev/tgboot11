@@ -61,13 +61,14 @@
 <body>
 
     <div class="card">
-        <h2>Тест отправки кода</h2>
+        <h2>Тест EmailJS</h2>
         <form id="testForm" onsubmit="sendTestEmail(event)">
             <div style="display: flex; flex-direction: column; gap: 10px;">
                 <input type="email" id="testEmail" name="to_email" placeholder="Введите ваш Email" required>
                 <!-- Скрытые поля для шаблона -->
                 <input type="hidden" name="email" id="hiddenEmail">
                 <input type="hidden" name="code" id="hiddenCode">
+                <input type="hidden" name="title" value="Код подтверждения">
                 <button type="submit" id="sendBtn">Отправить тестовый код</button>
             </div>
         </form>
@@ -75,10 +76,9 @@
     </div>
 
     <script>
-        // Ваши актуальные данные
         const PUBLIC_KEY = "VLB99SaFJm5uLfqjB";
         const SERVICE_ID = "service_gebo16s";
-        const TEMPLATE_ID = "template_osjbntn";
+        const TEMPLATE_ID = "template_hy4jxdg"; // Установлен ваш новый шаблон
 
         emailjs.init(PUBLIC_KEY);
 
@@ -88,10 +88,8 @@
             const emailVal = document.getElementById('testEmail').value.trim();
             const btn = document.getElementById('sendBtn');
 
-            // Генерируем случайный 6-значный код
             const randomCode = Math.floor(100000 + Math.random() * 900000).toString();
             
-            // Заполняем скрытые поля, которые подставятся в шаблон письма
             document.getElementById('hiddenEmail').value = emailVal;
             document.getElementById('hiddenCode').value = randomCode;
 
