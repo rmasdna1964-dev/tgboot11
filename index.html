@@ -27,6 +27,7 @@
             position: relative;
         }
 
+        /* Неоновые кольца (видны только на экранах авторизации) */
         .ring {
             position: relative;
             width: 500px;
@@ -34,12 +35,16 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            transition: 0.5s;
+        }
+
+        .ring.hidden {
+            display: none;
         }
 
         .ring i {
             position: absolute;
             inset: 0;
-            /* Постоянное красное неоновое свечение */
             border: 4px solid var(--clr);
             filter: drop-shadow(0 0 15px var(--clr));
             transition: 0.5s;
@@ -61,12 +66,6 @@
             border-radius: 41% 44% 56% 59% / 38% 62% 63% 37%;
             animation: animate2 10s linear infinite;
             --clr: #cc0000;
-        }
-
-        /* Усиление свечения при наведении мыши */
-        .ring:hover i {
-            border: 7px solid var(--clr);
-            filter: drop-shadow(0 0 25px var(--clr));
         }
 
         @keyframes animate {
@@ -116,7 +115,6 @@
             border-radius: 40px;
             font-size: 1em;
             color: #fff;
-            box-shadow: none;
             outline: none;
         }
 
@@ -183,18 +181,76 @@
             text-shadow: 0 0 8px rgba(255, 51, 51, 0.6);
         }
 
-        /* Личный кабинет */
+        /* --- НОВЫЙ ЛИЧНЫЙ КАБИНЕТ (Без круглых линий, строгий стиль) --- */
+        #dashboardForm {
+            width: 450px;
+            background: #181818;
+            border: 2px solid #333;
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.8);
+        }
+
+        .tab-content {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            text-align: center;
+            width: 100%;
+        }
+
+        .tab-content.active {
+            display: flex;
+        }
+
+        /* Карточки в магазине */
+        .shop-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            width: 100%;
+        }
+
+        .shop-item {
+            background: #222;
+            border: 1px solid #444;
+            padding: 12px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .shop-item h4 {
+            font-size: 0.95em;
+            color: #fff;
+            margin-bottom: 5px;
+        }
+
+        .shop-item button {
+            background: #00ff64;
+            color: #111;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 0.8em;
+        }
+
+        .shop-item button:hover {
+            background: #00cc52;
+        }
+
         .avatar {
             width: 60px;
             height: 60px;
             border-radius: 50%;
             border: 2px solid #ff0000;
-            box-shadow: 0 0 15px rgba(255, 0, 0, 0.6);
             display: flex;
             justify-content: center;
             align-items: center;
             font-size: 1.8em;
-            background: #1a1a1a;
+            background: #222;
         }
 
         .status-badge {
@@ -204,207 +260,168 @@
             padding: 3px 10px;
             border-radius: 20px;
             font-size: 0.75em;
-            letter-spacing: 1px;
         }
 
         .user-email {
             font-size: 0.8em;
             color: #aaa;
             word-break: break-all;
-            text-align: center;
         }
 
-        .tab-content {
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            gap: 12px;
-            text-align: center;
-            width: 100%;
-        }
-
-        .tab-content.active {
-            display: flex;
-        }
-
-        /* Нижняя панель навигации (4 вкладки вместо 5) */
-        .nav-container {
-            position: absolute;
-            bottom: 40px;
-            width: 270px;
-            height: 65px;
-            background: #1b1b1b;
-            border-radius: 20px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+        /* Верхняя или боковая навигация для личного кабинета */
+        .dashboard-nav {
             display: flex;
             justify-content: space-around;
-            align-items: center;
-            padding: 0 10px;
-            z-index: 100;
-            transition: 0.3s ease;
+            width: 100%;
+            background: #222;
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 10px;
         }
 
-        .nav-container.hidden {
-            display: none;
-        }
-
-        .nav-item {
-            position: relative;
-            width: 45px;
-            height: 45px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+        .dash-nav-btn {
+            background: none;
+            border: none;
+            color: #aaa;
             cursor: pointer;
-            text-decoration: none;
-            font-size: 1.2em;
-            color: #fff;
-            opacity: 0.5;
-            transition: 0.4s;
+            font-size: 0.9em;
+            font-weight: bold;
+            transition: 0.3s;
         }
 
-        .nav-item.active {
-            opacity: 1;
+        .dash-nav-btn.active {
             color: #ff0000;
-            text-shadow: 0 0 15px #ff0000;
-        }
-
-        .nav-indicator {
-            position: absolute;
-            top: 0;
-            left: 12px;
-            width: 25px;
-            height: 4px;
-            background: #fff;
-            border-radius: 2px;
-            box-shadow: 0 0 10px #fff, 0 0 20px #ff0000;
-            transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            text-shadow: 0 0 8px rgba(255,0,0,0.5);
         }
     </style>
 </head>
 <body>
-    <div class="ring">
+    <!-- Неоновые линии (видны только на экране входа/регистрации) -->
+    <div class="ring" id="neonRing">
         <i></i>
         <i></i>
         <i></i>
+    </div>
 
-        <!-- 1. Форма Входа -->
-        <div class="form-box" id="loginForm">
-            <h2>Вход</h2>
-            <div class="inputBx">
-                <input type="text" id="loginUser" placeholder="Имя пользователя">
-            </div>
-            <div class="inputBx">
-                <input type="password" placeholder="Пароль">
-            </div>
-            <div class="inputBx">
-                <input type="button" onclick="loginDirectly()" value="Войти">
-            </div>
-            <div class="links">
-                <a onclick="showForm('forgotForm')">Забыли пароль?</a>
-                <a onclick="showForm('signupForm')">Регистрация</a>
-            </div>
+    <!-- 1. Форма Входа -->
+    <div class="form-box" id="loginForm">
+        <h2>Вход</h2>
+        <p class="status-msg error" id="loginError" style="display: none; font-size: 0.8em;">Аккаунт не найден! Зарегистрируйтесь.</p>
+        <div class="inputBx">
+            <input type="text" id="loginUser" placeholder="Имя пользователя">
         </div>
-
-        <!-- 2. Форма Регистрации -->
-        <form class="form-box hidden" id="signupForm" onsubmit="sendEmailCode(event, 'signup')">
-            <h2>Регистрация</h2>
-            <div class="inputBx">
-                <input type="text" id="signupUser" placeholder="Имя пользователя">
-            </div>
-            <div class="inputBx">
-                <input type="email" id="signupEmail" name="to_email" placeholder="Email" required>
-                <input type="hidden" name="email" id="hiddenEmail">
-                <input type="hidden" name="code" id="hiddenCode">
-                <input type="hidden" name="title" value="Код подтверждения регистрации">
-                <input type="hidden" name="name" id="hiddenNameField">
-            </div>
-            <div class="inputBx">
-                <input type="password" placeholder="Пароль">
-            </div>
-            <div class="inputBx">
-                <input type="submit" value="Зарегистрироваться">
-            </div>
-            <div class="links">
-                <a onclick="showForm('loginForm')">Уже есть аккаунт?</a>
-            </div>
-        </form>
-
-        <!-- 3. Форма Подтверждения по Email -->
-        <div class="form-box hidden" id="verifyForm">
-            <h2>Подтверждение</h2>
-            <p class="status-msg" id="verifyStatus">Код успешно отправлен на вашу почту</p>
-            <div class="inputBx">
-                <input type="text" id="userInputCode" class="code-input" maxlength="6" placeholder="000000">
-            </div>
-            <div class="inputBx" id="newPasswordWrapper" style="display:none; margin-top: 10px;">
-                <input type="password" id="newPasswordInput" placeholder="Новый пароль">
-            </div>
-            <div class="inputBx" style="margin-top: 10px;">
-                <input type="button" onclick="verifyCode()" value="Подтвердить">
-            </div>
-            <div class="links">
-                <a onclick="showForm('loginForm')">Отмена</a>
-                <a onclick="resendCode()">Отправить снова</a>
-            </div>
+        <div class="inputBx">
+            <input type="password" id="loginPass" placeholder="Пароль">
         </div>
-
-        <!-- 4. Форма Сброса пароля -->
-        <form class="form-box hidden" id="forgotForm" onsubmit="sendEmailCode(event, 'forgot')">
-            <h2>Сброс пароля</h2>
-            <div class="inputBx">
-                <input type="email" id="forgotEmail" name="to_email" placeholder="Введите ваш Email" required>
-                <input type="hidden" name="email" id="forgotHiddenEmail">
-                <input type="hidden" name="code" id="forgotHiddenCode">
-                <input type="hidden" name="title" value="Сброс и восстановление пароля">
-                <input type="hidden" name="name" id="forgotHiddenNameField" value="Пользователь">
-            </div>
-            <div class="inputBx">
-                <input type="submit" value="Отправить код">
-            </div>
-            <div class="links">
-                <a onclick="showForm('loginForm')">Войти</a>
-                <a onclick="showForm('signupForm')">Регистрация</a>
-            </div>
-        </form>
-
-        <!-- 5. Главный экран (Личный кабинет) -->
-        <div class="form-box hidden" id="dashboardForm">
-            <div class="tab-content active" id="tabHome">
-                <h2>Главная</h2>
-                <p style="color: #ccc; font-size: 0.9em;">Система защиты кольца активна.</p>
-            </div>
-
-            <div class="tab-content" id="tabAdd">
-                <h2>Новый пост</h2>
-                <div class="inputBx">
-                    <input type="text" placeholder="Текст записи...">
-                </div>
-                <button class="btn-logout" style="margin-top:0;" onclick="alert('Успешно опубликовано!')">Опубликовать</button>
-            </div>
-
-            <div class="tab-content" id="tabProfile">
-                <div class="avatar">👤</div>
-                <h2 id="displayUsername" style="font-size: 1.4em;">User</h2>
-                <div class="status-badge">● VERIFIED</div>
-                <p class="user-email" id="displayEmail">email@example.com</p>
-                <button class="btn-logout" onclick="logout()">Выйти</button>
-            </div>
-
-            <div class="tab-content" id="tabNotif">
-                <h2>Уведомления</h2>
-                <p style="color: #00ff64; font-size: 0.85em;">• Авторизация прошла успешно</p>
-            </div>
+        <div class="inputBx">
+            <input type="button" onclick="loginDirectly()" value="Войти">
+        </div>
+        <div class="links">
+            <a onclick="showForm('forgotForm')">Забыли пароль?</a>
+            <a onclick="showForm('signupForm')">Регистрация</a>
         </div>
     </div>
 
-    <!-- Нижняя панель навигации -->
-    <div class="nav-container hidden" id="bottomNav">
-        <div class="nav-indicator" id="navIndicator"></div>
-        <a class="nav-item active" onclick="switchTab(0, 'tabHome', event)">🏠</a>
-        <a class="nav-item" onclick="switchTab(1, 'tabAdd', event)">➕</a>
-        <a class="nav-item" onclick="switchTab(2, 'tabProfile', event)">👤</a>
-        <a class="nav-item" onclick="switchTab(3, 'tabNotif', event)">🔔</a>
+    <!-- 2. Форма Регистрации -->
+    <form class="form-box hidden" id="signupForm" onsubmit="sendEmailCode(event, 'signup')">
+        <h2>Регистрация</h2>
+        <div class="inputBx">
+            <input type="text" id="signupUser" placeholder="Имя пользователя" required>
+        </div>
+        <div class="inputBx">
+            <input type="email" id="signupEmail" name="to_email" placeholder="Email" required>
+            <input type="hidden" name="email" id="hiddenEmail">
+            <input type="hidden" name="code" id="hiddenCode">
+            <input type="hidden" name="title" value="Код подтверждения регистрации">
+            <input type="hidden" name="name" id="hiddenNameField">
+        </div>
+        <div class="inputBx">
+            <input type="password" id="signupPass" placeholder="Пароль" required>
+        </div>
+        <div class="inputBx">
+            <input type="submit" value="Зарегистрироваться">
+        </div>
+        <div class="links">
+            <a onclick="showForm('loginForm')">Уже есть аккаунт?</a>
+        </div>
+    </form>
+
+    <!-- 3. Форма Подтверждения по Email -->
+    <div class="form-box hidden" id="verifyForm">
+        <h2>Подтверждение</h2>
+        <p class="status-msg" id="verifyStatus">Код успешно отправлен на вашу почту</p>
+        <div class="inputBx">
+            <input type="text" id="userInputCode" class="code-input" maxlength="6" placeholder="000000">
+        </div>
+        <div class="inputBx" id="newPasswordWrapper" style="display:none; margin-top: 10px;">
+            <input type="password" id="newPasswordInput" placeholder="Новый пароль">
+        </div>
+        <div class="inputBx" style="margin-top: 10px;">
+            <input type="button" onclick="verifyCode()" value="Подтвердить">
+        </div>
+        <div class="links">
+            <a onclick="showForm('loginForm')">Отмена</a>
+            <a onclick="resendCode()">Отправить снова</a>
+        </div>
+    </div>
+
+    <!-- 4. Форма Сброса пароля -->
+    <form class="form-box hidden" id="forgotForm" onsubmit="sendEmailCode(event, 'forgot')">
+        <h2>Сброс пароля</h2>
+        <div class="inputBx">
+            <input type="email" id="forgotEmail" name="to_email" placeholder="Введите ваш Email" required>
+            <input type="hidden" name="email" id="forgotHiddenEmail">
+            <input type="hidden" name="code" id="forgotHiddenCode">
+            <input type="hidden" name="title" value="Сброс и восстановление пароля">
+            <input type="hidden" name="name" id="forgotHiddenNameField" value="Пользователь">
+        </div>
+        <div class="inputBx">
+            <input type="submit" value="Отправить код">
+        </div>
+        <div class="links">
+            <a onclick="showForm('loginForm')">Войти</a>
+            <a onclick="showForm('signupForm')">Регистрация</a>
+        </div>
+    </form>
+
+    <!-- 5. Главный экран / Личный кабинет (Новый интерфейс без колец) -->
+    <div class="form-box hidden" id="dashboardForm">
+        <!-- Навигация внутри личного кабинета -->
+        <div class="dashboard-nav">
+            <button class="dash-nav-btn active" onclick="switchTab('tabHome', event)">Главная</button>
+            <button class="dash-nav-btn" onclick="switchTab('tabShop', event)">🛒 Магазин</button>
+            <button class="dash-nav-btn" onclick="switchTab('tabProfile', event)">Профиль</button>
+        </div>
+
+        <div class="tab-content active" id="tabHome">
+            <h2>Главная</h2>
+            <p style="color: #ccc; font-size: 0.9em;">Добро пожаловать в систему защищенного доступа!</p>
+        </div>
+
+        <!-- Вкладка Магазин (добавлено по запросу) -->
+        <div class="tab-content" id="tabShop">
+            <h2>Магазин привилегий</h2>
+            <div class="shop-grid">
+                <div class="shop-item">
+                    <h4>VIP Статус</h4>
+                    <p style="font-size: 0.75em; color: #aaa; margin-bottom: 8px;">Цветной ник и доступ</p>
+                    <button onclick="alert('Успешно куплено!')">Купить</button>
+                </div>
+                <div class="shop-item">
+                    <h4>Премиум</h4>
+                    <p style="font-size: 0.75em; color: #aaa; margin-bottom: 8px;">Максимальные фичи</p>
+                    <button onclick="alert('Успешно куплено!')">Купить</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-content" id="tabProfile">
+            <div class="avatar">👤</div>
+            <h2 id="displayUsername" style="font-size: 1.4em;">User</h2>
+            <div class="status-badge">● VERIFIED</div>
+            <p class="user-email" id="displayEmail">email@example.com</p>
+            <button class="btn-logout" onclick="logout()">Выйти</button>
+        </div>
     </div>
 
     <script>
@@ -415,7 +432,7 @@
         emailjs.init(PUBLIC_KEY);
 
         let generatedCode = null;
-        let currentUser = { name: '', email: '' };
+        let currentUser = { name: '', email: '', password: '' };
         let flowType = 'signup';
 
         function showForm(formId) {
@@ -424,7 +441,9 @@
             document.getElementById('verifyForm').classList.add('hidden');
             document.getElementById('forgotForm').classList.add('hidden');
             document.getElementById('dashboardForm').classList.add('hidden');
-            document.getElementById('bottomNav').classList.add('hidden');
+            
+            // Показываем неоновые кольца только на экранах входа/регистрации
+            document.getElementById('neonRing').classList.remove('hidden');
             
             document.getElementById(formId).classList.remove('hidden');
         }
@@ -438,6 +457,7 @@
 
             if (flowType === 'signup') {
                 currentUser.name = document.getElementById('signupUser').value.trim() || 'Пользователь';
+                currentUser.password = document.getElementById('signupPass').value.trim();
                 email = document.getElementById('signupEmail').value.trim();
                 currentUser.email = email;
 
@@ -449,12 +469,10 @@
             } else {
                 email = document.getElementById('forgotEmail').value.trim();
                 currentUser.email = email;
-                currentUser.name = 'Пользователь';
 
                 generatedCode = Math.floor(100000 + Math.random() * 900000).toString();
                 document.getElementById('forgotHiddenEmail').value = email;
                 document.getElementById('forgotHiddenCode').value = generatedCode;
-                document.getElementById('forgotHiddenNameField').value = currentUser.name;
                 formElement = document.getElementById('forgotForm');
             }
 
@@ -469,7 +487,7 @@
             emailjs.sendForm(SERVICE_ID, TEMPLATE_ID, formElement)
                 .then(() => {
                     const statusText = document.getElementById('verifyStatus');
-                    statusText.innerText = 'Код успешно отправлен на вашу почту';
+                    statusText.innerText = 'Код успешно отправлен на вашу почту {{to_email}}';
                     statusText.classList.remove('error');
                     statusText.style.display = 'block';
 
@@ -547,9 +565,12 @@
                         statusText.style.display = 'block';
                         return;
                     }
+                    currentUser.password = newPass;
                     alert('Пароль успешно изменен!');
                     showForm('loginForm');
                 } else {
+                    // Успешная регистрация сохраняет аккаунт в память
+                    localStorage.setItem('registeredUser', JSON.stringify(currentUser));
                     openDashboard(currentUser.name, currentUser.email);
                 }
             } else {
@@ -560,8 +581,27 @@
         }
 
         function loginDirectly() {
-            const username = document.getElementById('loginUser').value.trim() || 'User';
-            openDashboard(username, 'Вход выполнен');
+            const usernameInput = document.getElementById('loginUser').value.trim();
+            const passwordInput = document.getElementById('loginPass').value.trim();
+            const errorMsg = document.getElementById('loginError');
+
+            // Проверяем, есть ли зарегистрированный пользователь в памяти
+            const savedUser = JSON.parse(localStorage.getItem('registeredUser'));
+
+            if (!savedUser) {
+                errorMsg.innerText = 'Нет зарегистрированных аккаунтов!';
+                errorMsg.style.display = 'block';
+                return;
+            }
+
+            // Проверка введенных данных с сохраненными
+            if (usernameInput === savedUser.name && passwordInput === savedUser.password) {
+                errorMsg.style.display = 'none';
+                openDashboard(savedUser.name, savedUser.email);
+            } else {
+                errorMsg.innerText = 'Неверное имя пользователя или пароль!';
+                errorMsg.style.display = 'block';
+            }
         }
 
         function openDashboard(name, email) {
@@ -573,32 +613,30 @@
             document.getElementById('verifyForm').classList.add('hidden');
             document.getElementById('forgotForm').classList.add('hidden');
             
+            // Скрываем неоновые кольца при входе в личный кабинет
+            document.getElementById('neonRing').classList.add('hidden');
+            
             document.getElementById('dashboardForm').classList.remove('hidden');
-            document.getElementById('bottomNav').classList.remove('hidden');
-
-            switchTab(2, 'tabProfile', null);
+            switchTab('tabHome', null);
         }
 
-        function switchTab(index, tabId, event) {
+        function switchTab(tabId, event) {
             if (event) event.preventDefault();
 
             const tabs = document.querySelectorAll('.tab-content');
             tabs.forEach(t => t.classList.remove('active'));
             document.getElementById(tabId).classList.add('active');
 
-            const items = document.querySelectorAll('.nav-item');
-            items.forEach(i => i.classList.remove('active'));
-            items[index].classList.add('active');
-
-            const indicator = document.getElementById('navIndicator');
-            indicator.style.left = (12 + (index * 68)) + 'px';
+            const buttons = document.querySelectorAll('.dash-nav-btn');
+            buttons.forEach(b => b.classList.remove('active'));
+            if (event && event.target) {
+                event.target.classList.add('active');
+            }
         }
 
         function logout() {
-            document.getElementById('signupEmail').value = '';
             document.getElementById('userInputCode').value = '';
             document.getElementById('verifyStatus').style.display = 'none';
-            document.getElementById('bottomNav').classList.add('hidden');
             showForm('loginForm');
         }
     </script>
