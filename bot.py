@@ -4,14 +4,14 @@ from aiogram import Bot, Dispatcher, F, types
 from aiogram.filters import CommandStart
 from aiogram.types import LabeledPrice
 
-# Токен первого бота (Магазин)
+# Токен первого бота (Магазин): @vouch_01_rep_bot
 SHOP_TOKEN = "8838093580:AAEDZArbQx7N5B-acHHp9JIkSCuf6nToQFI"
 
-# Данные второго бота (Админ-бот), который будет присылать тебе уведомления
+# Токен второго бота (Админ-бот), который присылает тебе уведомления
 ADMIN_BOT_TOKEN = "8623258820:AAEInCHPfQXtgMcW6i5Ftt07ewy9JXFlxaE"
-MY_TELEGRAM_ID = (
-    8706958823  # Твой личный Telegram ID, куда админ-бот пришлет уведомление
-)
+
+# ⚠️ Вставь сюда СВОЙ числовой Telegram ID (узнать можно у @userinfobot)
+MY_TELEGRAM_ID = 712345678
 
 bot_shop = Bot(token=SHOP_TOKEN)
 bot_admin_sender = Bot(token=ADMIN_BOT_TOKEN)
@@ -19,7 +19,7 @@ dp = Dispatcher()
 
 ITEM_TITLE = "Виртуальный номер +65"
 ITEM_DESCRIPTION = "Покупка номера +65 (Сингапур). В наличии 1 шт."
-PRICE_IN_STARS = 1
+PRICE_IN_STARS = 50
 
 stock_available = True
 
@@ -84,7 +84,7 @@ async def process_successful_payment(message: types.Message):
   stock_available = False
   secret_number = "+65 1234 5678 (данные для входа / код)"
 
-  # 1. Выдаем товар покупателю
+  # 1. Выдаем товар покупателю в магазине
   await message.answer(
       "✅ **Оплата прошла успешно! Спасибо за покупку!** 🎉\n\n"
       "Вот твой товар (номер +65):\n"
@@ -92,34 +92,35 @@ async def process_successful_payment(message: types.Message):
       parse_mode="Markdown",
   )
 
-  # 2. Собираем данные о покупателе
+  # 2. Собираем информацию о покупателе
   buyer = message.from_user
   buyer_name = buyer.full_name
   buyer_username = f"@{buyer.username}" if buyer.username else "нет юзернейма"
   buyer_id = buyer.id
 
-  # 3. Отправляем через ВТОРОГО бота уведомление тебе с кнопкой связи
+  # 3. Формируем текст уведомления для тебя
   notification_text = (
-      "🚨 **Новая покупка в магазине!**\n\n"
+      "🚨 **Новая покупка номера!**\n\n"
       f"👤 **Покупатель:** {buyer_name} ({buyer_username})\n"
       f"🆔 **ID:** `{buyer_id}`\n"
       f"📦 **Товар:** Номер +65\n"
       f"⭐ **Сумма:** {PRICE_IN_STARS} Stars"
   )
 
-  # Кнопка для быстрой связи с покупателем (ведет прямо на его профиль)
+  # Создаем кнопку связи с покупателем по его Telegram ID
   contact_keyboard = types.InlineKeyboardMarkup(inline_keyboard=[[
       types.InlineKeyboardButton(
           text="💬 Написать покупателю", url=f"tg://user?id={buyer_id}"
       )
   ]])
 
+  # 4. Второй бот отправляет тебе личное сообщение с кнопкой
   try:
     await bot_admin_sender.send_message(
         chat_id=MY_TELEGRAM_ID,
         text=notification_text,
         reply_markup=contact_keyboard,
-        parse_nomode="Markdown",  # Исправлено на правильный параметр
+        parse_mode="Markdown",
     )
   except Exception as e:
     logging.error(f"Не удалось отправить уведомление админу: {e}")
@@ -127,7 +128,7 @@ async def process_successful_payment(message: types.Message):
 
 async def main():
   logging.basicConfig(level=logging.INFO)
-  print("Магазин запущен...")
+  print("Бот-магазин запущен...")
   await dp.start_polling(bot_shop)
 
 
