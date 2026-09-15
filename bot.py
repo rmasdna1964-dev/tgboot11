@@ -10,7 +10,7 @@ SHOP_TOKEN = "8838093580:AAEDZArbQx7N5B-acHHp9JIkSCuf6nToQFI"
 # Данные второго бота (Админ-бот), который будет присылать тебе уведомления
 ADMIN_BOT_TOKEN = "8623258820:AAEInCHPfQXtgMcW6i5Ftt07ewy9JXFlxaE"
 MY_TELEGRAM_ID = (
-    712345678  # Твой личный Telegram ID, куда админ-бот пришлет уведомление
+    8706958823  # Твой личный Telegram ID, куда админ-бот пришлет уведомление
 )
 
 bot_shop = Bot(token=SHOP_TOKEN)
@@ -19,7 +19,7 @@ dp = Dispatcher()
 
 ITEM_TITLE = "Виртуальный номер +65"
 ITEM_DESCRIPTION = "Покупка номера +65 (Сингапур). В наличии 1 шт."
-PRICE_IN_STARS = 50
+PRICE_IN_STARS = 1
 
 stock_available = True
 
