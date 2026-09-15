@@ -1,12 +1,14 @@
 import asyncio
 import logging
+import os
 from aiogram import Bot, Dispatcher, types
 from aiogram.filters import CommandStart
 
-TOKEN = "8838093580:AAEDZArbQx7N5B-acHHp9JIkSCuf6nToQFI"
+# Только токен от BotFather (можно вписать прямо сюда или через переменные окружения)
+BOT_TOKEN = os.getenv("BOT_TOKEN", "8838093580:AAEDZArbQx7N5B-acHHp9JIkSCuf6nToQFI")
 AUTO_REPLY_TEXT = "Привет! Сейчас меня нет на сети, отвечу позже. 1+ rep 🇺🇸"
 
-bot = Bot(token=TOKEN)
+bot = Bot(token=BOT_TOKEN)
 dp = Dispatcher()
 
 
