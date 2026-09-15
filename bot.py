@@ -2,7 +2,6 @@ import asyncio
 import logging
 from aiogram import Bot, Dispatcher, F, types
 from aiogram.filters import CommandStart
-from aiogram.types import LabeledPrice
 
 # Токен первого бота (Магазин): @vouch_01_rep_bot
 SHOP_TOKEN = "8838093580:AAEDZArbQx7N5B-acHHp9JIkSCuf6nToQFI"
@@ -10,111 +9,79 @@ SHOP_TOKEN = "8838093580:AAEDZArbQx7N5B-acHHp9JIkSCuf6nToQFI"
 # Токен второго бота (Админ-бот), который присылает тебе уведомления
 ADMIN_BOT_TOKEN = "8623258820:AAEInCHPfQXtgMcW6i5Ftt07ewy9JXFlxaE"
 
-# ⚠️ Вставь сюда СВОЙ числовой Telegram ID (узнать можно у @userinfobot)
-MY_TELEGRAM_ID = 712345678
+# Твой реальный Telegram ID
+MY_TELEGRAM_ID = 8706958823
 
 bot_shop = Bot(token=SHOP_TOKEN)
 bot_admin_sender = Bot(token=ADMIN_BOT_TOKEN)
 dp = Dispatcher()
 
-ITEM_TITLE = "Виртуальный номер +65"
-ITEM_DESCRIPTION = "Покупка номера +65 (Сингапур). В наличии 1 шт."
-PRICE_IN_STARS = 50
-
-stock_available = True
+stock_available = True  # В наличии 1 шт. (+65)
 
 
 @dp.message(CommandStart())
 async def start_handler(message: types.Message):
   keyboard = types.InlineKeyboardMarkup(inline_keyboard=[[
       types.InlineKeyboardButton(
-          text=f"Купить номер +65 🇸🇬 ({PRICE_IN_STARS} ⭐)",
-          callback_data="buy_number"),
+          text="🎁 Забрать номер +65 🇸🇬 (0 ⭐)", callback_data="claim_free_number"
+      ),
   ]])
   await message.answer(
-      "👋 Добро пожаловать в магазин номеров!\n\n"
+      "👋 Добро пожаловать!\n\n"
       "📦 **Товар в наличии:**\n"
       "• Номер: `+65` (Сингапур)\n"
-      f"• Цена: {PRICE_IN_STARS} ⭐\n\n"
-      "Нажми кнопку ниже для покупки:",
+      "• Цена: **0 ⭐** (Бесплатно)\n\n"
+      "Нажми кнопку ниже, чтобы забрать:",
       reply_markup=keyboard,
       parse_mode="Markdown",
   )
 
 
-@dp.callback_query(F.data == "buy_number")
-async def process_buy(callback: types.CallbackQuery):
+@dp.callback_query(F.data == "claim_free_number")
+async def process_claim(callback: types.CallbackQuery):
   global stock_available
+
   if not stock_available:
     await callback.answer(
-        "❌ Этот номер уже купили! Больше нет в наличии.", show_alert=True
+        "❌ Этот номер уже кто-то забрал! Больше нет в наличии.", show_alert=True
     )
     return
 
-  prices = [LabeledPrice(label="Номер +65", amount=PRICE_IN_STARS)]
-  await callback.message.answer_invoice(
-      title=ITEM_TITLE,
-      description=ITEM_DESCRIPTION,
-      prices=prices,
-      provider_token="",
-      payload="number_65_payload",
-      currency="XTR",
-  )
-  await callback.answer()
-
-
-@dp.pre_checkout_query()
-async def process_pre_checkout_query(pre_checkout_query: types.PreCheckoutQuery):
-  global stock_available
-  if not stock_available:
-    await pre_checkout_query.answer(
-        ok=False, error_message="К сожалению, товар только что закончился!"
-    )
-    return
-  await pre_checkout_query.answer(ok=True)
-
-
-@dp.message(F.successful_payment)
-async def process_successful_payment(message: types.Message):
-  global stock_available
-  if not stock_available:
-    await message.answer("Ошибка: товар уже был продан.")
-    return
-
+  # Снимаем товар с наличия, чтобы больше никто не забрал
   stock_available = False
   secret_number = "+65 1234 5678 (данные для входа / код)"
 
-  # 1. Выдаем товар покупателю в магазине
-  await message.answer(
-      "✅ **Оплата прошла успешно! Спасибо за покупку!** 🎉\n\n"
-      "Вот твой товар (номер +65):\n"
+  # 1. Выдаем номер пользователю прямо в чат
+  await callback.message.edit_text(
+      "✅ **Номер успешно получен!** 🎉\n\n"
+      "Вот твой товар:\n"
       f"🔒 `{secret_number}`",
       parse_mode="Markdown",
   )
 
-  # 2. Собираем информацию о покупателе
-  buyer = message.from_user
+  # 2. Собираем данные о покупателе
+  buyer = callback.from_user
   buyer_name = buyer.full_name
   buyer_username = f"@{buyer.username}" if buyer.username else "нет юзернейма"
   buyer_id = buyer.id
 
-  # 3. Формируем текст уведомления для тебя
+  # 3. Формируем отчет для тебя
   notification_text = (
-      "🚨 **Новая покупка номера!**\n\n"
-      f"👤 **Покупатель:** {buyer_name} ({buyer_username})\n"
+      "🚨 **Кто-то забрал номер (+65)!**\n\n"
+      f"👤 **Пользователь:** {buyer_name} ({buyer_username})\n"
       f"🆔 **ID:** `{buyer_id}`\n"
-      f"📦 **Товар:** Номер +65\n"
-      f"⭐ **Сумма:** {PRICE_IN_STARS} Stars"
+      "📦 **Товар:** Номер +65\n"
+      "⭐ **Цена:** 0 Stars"
   )
 
-  # Создаем кнопку связи с покупателем по его Telegram ID
+  # Кнопка для быстрой связи с этим конкретным пользователем
   contact_keyboard = types.InlineKeyboardMarkup(inline_keyboard=[[
       types.InlineKeyboardButton(
           text="💬 Написать покупателю", url=f"tg://user?id={buyer_id}"
       )
   ]])
 
-  # 4. Второй бот отправляет тебе личное сообщение с кнопкой
+  # 4. Второй бот отправляет тебе личное уведомление с рабочей кнопкой
   try:
     await bot_admin_sender.send_message(
         chat_id=MY_TELEGRAM_ID,
@@ -125,10 +92,12 @@ async def process_successful_payment(message: types.Message):
   except Exception as e:
     logging.error(f"Не удалось отправить уведомление админу: {e}")
 
+  await callback.answer()
+
 
 async def main():
   logging.basicConfig(level=logging.INFO)
-  print("Бот-магазин запущен...")
+  print("Бот запущен и готов к работе...")
   await dp.start_polling(bot_shop)
 
 
