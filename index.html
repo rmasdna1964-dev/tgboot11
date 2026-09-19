@@ -137,6 +137,7 @@
 
         .form-box .inputBx input[type="submit"],
         .form-box .inputBx input[type="button"],
+        .btn-download,
         .btn-logout {
             width: 100%;
             background: linear-gradient(45deg, #ff0000, #ff5555);
@@ -149,13 +150,28 @@
             margin-top: 5px;
             transition: 0.3s ease;
             font-size: 1em;
+            text-align: center;
+            text-decoration: none;
+            display: block;
         }
 
         .form-box .inputBx input[type="submit"]:hover,
         .form-box .inputBx input[type="button"]:hover,
+        .btn-download:hover,
         .btn-logout:hover {
             box-shadow: 0 0 15px #ff0000;
             transform: scale(1.02);
+        }
+
+        .btn-logout {
+            background: #333;
+            border: 1px solid #555;
+            margin-top: 10px;
+        }
+        
+        .btn-logout:hover {
+            background: #444;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
         }
 
         .form-box .links {
@@ -194,144 +210,40 @@
             text-shadow: 0 0 8px rgba(255, 51, 51, 0.6);
         }
 
-        /* --- ЛИЧНЫЙ КАБИНЕТ С БОКОВЫМ МЕНЮ --- */
+        /* --- ЛИЧНЫЙ КАБИНЕТ (БЕЗ ВКЛАДОК) --- */
         #dashboardForm {
             position: absolute;
-            width: 680px;
-            min-height: 400px;
+            width: 380px;
             background: #181818;
             border: 2px solid #333;
             border-radius: 20px;
-            padding: 25px;
+            padding: 30px;
             box-shadow: 0 20px 40px rgba(0,0,0,0.8);
             display: flex;
-            flex-direction: row;
-            gap: 25px;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
             z-index: 10;
+            color: #fff;
+            text-align: center;
         }
 
         #dashboardForm.hidden {
             display: none !important;
         }
 
-        .dashboard-nav {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            width: 180px;
-            background: #222;
-            padding: 20px 12px;
-            border-radius: 14px;
-            border: 1px solid #333;
-        }
-
-        .dash-nav-btn {
-            background: transparent;
-            border: none;
-            color: #aaa;
-            cursor: pointer;
-            font-size: 0.95em;
-            font-weight: bold;
-            padding: 12px 15px;
-            text-align: left;
-            border-radius: 10px;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .dash-nav-btn:hover {
-            background: #2a2a2a;
-            color: #fff;
-            transform: translateX(6px);
-            box-shadow: 0 0 10px rgba(255, 0, 0, 0.2);
-        }
-
-        .dash-nav-btn.active {
-            background: rgba(255, 0, 0, 0.15);
-            color: #ff0000;
-            border-left: 4px solid #ff0000;
-            transform: translateX(6px);
-            text-shadow: 0 0 8px rgba(255, 0, 0, 0.5);
-        }
-
-        .dashboard-body {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            padding: 10px;
-            color: #fff;
-        }
-
-        .tab-content {
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            gap: 15px;
-            width: 100%;
-        }
-
-        .tab-content.active {
-            display: flex;
-        }
-
-        .shop-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            width: 100%;
-        }
-
-        .shop-item {
-            background: #222;
-            border: 1px solid #444;
-            padding: 15px;
-            border-radius: 12px;
-            text-align: center;
-            transition: 0.3s;
-        }
-
-        .shop-item:hover {
-            border-color: #ff0000;
-            box-shadow: 0 0 15px rgba(255, 0, 0, 0.15);
-        }
-
-        .shop-item h4 {
-            font-size: 0.95em;
-            color: #fff;
-            margin-bottom: 5px;
-        }
-
-        .shop-item button {
-            background: #00ff64;
-            color: #111;
-            border: none;
-            padding: 7px 14px;
-            border-radius: 6px;
-            font-weight: bold;
-            cursor: pointer;
-            font-size: 0.85em;
-            transition: 0.3s;
-        }
-
-        .shop-item button:hover {
-            background: #00cc52;
-            box-shadow: 0 0 10px #00ff64;
-            transform: scale(1.05);
-        }
-
         .avatar {
-            width: 65px;
-            height: 65px;
+            width: 75px;
+            height: 75px;
             border-radius: 50%;
             border: 2px solid #ff0000;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 1.8em;
+            font-size: 2em;
             background: #222;
             box-shadow: 0 0 15px rgba(255, 0, 0, 0.3);
+            margin-bottom: 5px;
         }
 
         .status-badge {
@@ -341,12 +253,24 @@
             padding: 4px 12px;
             border-radius: 20px;
             font-size: 0.75em;
+            margin-bottom: 5px;
         }
 
         .user-email {
             font-size: 0.85em;
             color: #aaa;
             word-break: break-all;
+            margin-bottom: 10px;
+        }
+
+        .downloads-container {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 10px;
+            border-top: 1px solid #333;
+            padding-top: 15px;
         }
     </style>
 </head>
@@ -428,50 +352,19 @@
         </div>
     </form>
 
-    <!-- 5. Личный кабинет -->
+    <!-- 5. Личный кабинет (Только Профиль и Скачивание) -->
     <div class="hidden" id="dashboardForm">
-        <div class="dashboard-nav">
-            <button class="dash-nav-btn active" onclick="switchTab('tabHome', event)">🏠 Главная</button>
-            <button class="dash-nav-btn" onclick="switchTab('tabShop', event)">🛒 Магазин</button>
-            <button class="dash-nav-btn" onclick="switchTab('tabGame', event)">🎮 Игры</button>
-            <button class="dash-nav-btn" onclick="switchTab('tabProfile', event)">👤 Профиль</button>
+        <div class="avatar">👤</div>
+        <h2 id="displayUsername" style="font-size: 1.4em;">User</h2>
+        <div class="status-badge">● VERIFIED</div>
+        <p class="user-email" id="displayEmail">email@example.com</p>
+        
+        <div class="downloads-container">
+            <button class="btn-download" onclick="downloadFile('exe')">💻 Скачать для Windows (.exe)</button>
+            <button class="btn-download" onclick="downloadFile('apk')">📱 Скачать для Android (.apk)</button>
         </div>
 
-        <div class="dashboard-body">
-            <div class="tab-content active" id="tabHome">
-                <h2>Главная</h2>
-                <p style="color: #aaa; font-size: 0.9em;">Добро пожаловать в защищенную систему!</p>
-            </div>
-
-            <div class="tab-content" id="tabShop">
-                <h2>Магазин</h2>
-                <div class="shop-grid">
-                    <div class="shop-item">
-                        <h4>📱 TG Номер (+888)</h4>
-                        <p style="font-size: 0.7em; color: #888; margin-bottom: 8px;">Анонимный блокчейн</p>
-                        <button onclick="alert('Покупка номера Telegram оформлена!')">Купить</button>
-                    </div>
-                    <div class="shop-item">
-                        <h4>⭐ VIP Статус</h4>
-                        <p style="font-size: 0.7em; color: #888; margin-bottom: 8px;">Цветной ник в системе</p>
-                        <button onclick="alert('Успешно куплено!')">Купить</button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="tab-content" id="tabGame">
-                <h2>Игры</h2>
-                <p style="color: #ff5555; font-size: 1em; font-weight: bold;">🚧 Игра находится в разработке...</p>
-            </div>
-
-            <div class="tab-content" id="tabProfile">
-                <div class="avatar">👤</div>
-                <h2 id="displayUsername" style="font-size: 1.3em;">User</h2>
-                <div class="status-badge">● VERIFIED</div>
-                <p class="user-email" id="displayEmail">email@example.com</p>
-                <button class="btn-logout" onclick="logout()">Выйти</button>
-            </div>
-        </div>
+        <button class="btn-logout" onclick="logout()">Выйти из аккаунта</button>
     </div>
 
     <script>
@@ -608,21 +501,24 @@
             
             document.getElementById('neonRing').classList.add('hidden');
             document.getElementById('dashboardForm').classList.remove('hidden');
-            switchTab('tabHome', null);
         }
 
-        function switchTab(tabId, event) {
-            if (event) event.preventDefault();
-
-            const tabs = document.querySelectorAll('.tab-content');
-            tabs.forEach(t => t.classList.remove('active'));
-            document.getElementById(tabId).classList.add('active');
-
-            const buttons = document.querySelectorAll('.dash-nav-btn');
-            buttons.forEach(b => b.classList.remove('active'));
-            if (event && event.target) {
-                event.target.classList.add('active');
-            }
+        // Функция симуляции скачивания файлов
+        function downloadFile(type) {
+            const fileName = type === 'exe' ? 'CyberAuth-Setup.exe' : 'CyberAuth-Mobile.apk';
+            const fileContent = type === 'exe' 
+                ? 'Mock binary data for Windows Executable (.exe)' 
+                : 'Mock binary data for Android Package (.apk)';
+            
+            const blob = new Blob([fileContent], { type: 'application/octet-stream' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = fileName;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
         }
 
         function logout() {
