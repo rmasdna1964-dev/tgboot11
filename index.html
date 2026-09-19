@@ -319,8 +319,8 @@
                 clone = dockEl.firstElementChild.cloneNode(true);
                 clone.style.position = 'fixed';
                 clone.style.zIndex = '1000';
-                // Смещаем фигуру выше пальца, чтобы она не закрывала обзор
-                clone.style.transform = 'scale(0.85) translate(-50%, -135%)';
+                // Смещаем клон ровно так, чтобы палец был чуть ниже центра фигуры (классический удобный отступ)
+                clone.style.transform = 'scale(0.85) translate(-50%, -100%)';
                 clone.style.pointerEvents = 'none';
                 document.body.appendChild(clone);
 
@@ -338,13 +338,12 @@
                 const touch = e.touches ? e.touches[0] : e;
                 updateClonePos(touch.clientX, touch.clientY, clone);
                 
-                // Передаем координаты верхней левой точки самой фигуры для подсветки
+                // Проверяем попадание по реальному положению верхнего левого угла фигуры
                 const pieceRect = boardEl.getBoundingClientRect();
                 const cellWidth = pieceRect.width / BOARD_SIZE;
                 
-                // Вычисляем точку привязки относительно пальца с учетом смещения
-                const checkX = touch.clientX;
-                const checkY = touch.clientY - (cellWidth * 2.5);
+                const checkX = touch.clientX - (cellWidth * 1.0);
+                const checkY = touch.clientY - (cellWidth * 2.2);
                 
                 highlightHover(checkX, checkY, currentPieces[index]);
             };
@@ -355,8 +354,9 @@
                 
                 const pieceRect = boardEl.getBoundingClientRect();
                 const cellWidth = pieceRect.width / BOARD_SIZE;
-                const checkX = touch.clientX;
-                const checkY = touch.clientY - (cellWidth * 2.5);
+                
+                const checkX = touch.clientX - (cellWidth * 1.0);
+                const checkY = touch.clientY - (cellWidth * 2.2);
 
                 const dropped = tryDropPiece(checkX, checkY, index);
 
