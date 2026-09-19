@@ -29,6 +29,19 @@
             z-index: 9999;
             border-radius: 4px;
         }
+        @keyframes pop-text {
+            0% { transform: scale(0.5); opacity: 0; }
+            50% { transform: scale(1.2); opacity: 1; }
+            100% { transform: scale(1); opacity: 0; }
+        }
+        .combo-popup {
+            position: fixed;
+            pointer-events: none;
+            animation: pop-text 0.8s ease-out forwards;
+            z-index: 9998;
+            font-weight: 900;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
     </style>
 </head>
 <body class="flex flex-col h-screen w-screen justify-between items-center p-3 select-none">
@@ -38,15 +51,13 @@
         <div class="flex-1 flex flex-col justify-center items-center w-full max-w-xs text-center">
             <div class="text-6xl mb-3 animate-bounce">🧊</div>
             <h1 class="text-4xl font-black mb-1 tracking-wider text-white drop-shadow-md">BLOCK BLAST</h1>
-            <p class="text-blue-100 text-sm mb-8 font-medium">Выберите режим игры</p>
+            <p class="text-blue-100 text-sm mb-8 font-medium">Классический режим</p>
             
             <div class="flex flex-col gap-3.5 w-full">
-                <button onclick="startGame('classic')" class="py-4 bg-gradient-to-r from-amber-400 to-orange-500 rounded-2xl font-black text-lg text-slate-900 shadow-lg active:scale-95 transition">👑 Классика</button>
-                <button onclick="startGame('infinite')" class="py-4 bg-gradient-to-r from-emerald-400 to-teal-500 rounded-2xl font-black text-lg text-slate-900 shadow-lg active:scale-95 transition">♾️ Бесконечно</button>
-                <button onclick="startGame('time')" class="py-4 bg-gradient-to-r from-purple-500 to-indigo-600 rounded-2xl font-black text-lg text-white shadow-lg active:scale-95 transition">⏳ Время (60с)</button>
+                <button onclick="startGame('classic')" class="py-4 bg-gradient-to-r from-amber-400 to-orange-500 rounded-2xl font-black text-lg text-slate-900 shadow-lg active:scale-95 transition">👑 Играть</button>
             </div>
         </div>
-        <div class="text-xs text-blue-200 font-semibold">Мобильная веб-версия</div>
+        <div class="text-xs text-blue-200 font-semibold">Сетка 8×8 • Без поворота фигур</div>
     </div>
 
     <!-- Верхняя панель -->
@@ -55,7 +66,7 @@
             <span class="text-xl">👑</span>
             <div class="flex flex-col">
                 <span class="text-[9px] text-amber-300 font-bold uppercase tracking-wider">Рекорд</span>
-                <span id="best-score" class="text-base font-black">380</span>
+                <span id="best-score" class="text-base font-black">0</span>
             </div>
         </div>
         <div class="flex flex-col items-center">
@@ -154,13 +165,11 @@
         const BOARD_SIZE = 8;
         let board = Array(BOARD_SIZE).fill(0).map(() => Array(BOARD_SIZE).fill(null));
         let score = 0;
-        let bestScore = localStorage.getItem('block_blast_best') || 380;
+        let bestScore = localStorage.getItem('block_blast_best') || 0;
         let currentPieces = [null, null, null];
         let soundEnabled = true;
-        let gameMode = 'classic';
-        let timeLeft = 60;
-        let timerInterval = null;
 
+        // Классические фигуры (без возможности поворота)
         const SHAPES = [
             [[1]], 
             [[1, 1]], 
@@ -173,7 +182,9 @@
             [[1, 1], [1, 0]], 
             [[1, 1, 1], [0, 0, 1]], 
             [[0, 0, 1], [1, 1, 1]], 
-            [[0, 1, 0], [1, 1, 1]] 
+            [[0, 1, 0], [1, 1, 1]],
+            [[1, 1, 1, 1]],
+            [[1], [1], [1], [1]]
         ];
 
         const COLORS = [
@@ -187,7 +198,6 @@
 
         const boardEl = document.getElementById('board');
         const scoreEl = document.getElementById('current-score');
-        const headerLabelEl = document.getElementById('header-label');
         const bestScoreEl = document.getElementById('best-score');
         const finalScoreEl = document.getElementById('final-score');
         const modalEl = document.getElementById('game-over-modal');
@@ -231,31 +241,11 @@
         }
 
         function startGame(mode) {
-            gameMode = mode;
             mainMenuEl.classList.add('hidden');
             board = Array(BOARD_SIZE).fill(0).map(() => Array(BOARD_SIZE).fill(null));
             score = 0;
             updateScore();
             modalEl.classList.add('hidden');
-            
-            if (timerInterval) clearInterval(timerInterval);
-
-            if (gameMode === 'time') {
-                timeLeft = 60;
-                headerLabelEl.textContent = '⏱️ Время';
-                scoreEl.textContent = timeLeft;
-                timerInterval = setInterval(() => {
-                    timeLeft--;
-                    scoreEl.textContent = timeLeft;
-                    if (timeLeft <= 0) {
-                        clearInterval(timerInterval);
-                        triggerGameOver("Время вышло!");
-                    }
-                }, 1000);
-            } else {
-                headerLabelEl.textContent = 'Счет';
-                scoreEl.textContent = score;
-            }
 
             initBoardUI();
             renderBoard();
@@ -263,7 +253,6 @@
         }
 
         function returnToMenu() {
-            if (timerInterval) clearInterval(timerInterval);
             modalEl.classList.add('hidden');
             mainMenuEl.classList.remove('hidden');
         }
@@ -319,7 +308,7 @@
                 clone = dockEl.firstElementChild.cloneNode(true);
                 clone.style.position = 'fixed';
                 clone.style.zIndex = '1000';
-                // Смещаем клон ровно так, чтобы палец был чуть ниже центра фигуры (классический удобный отступ)
+                // Корректное смещение клона под палец
                 clone.style.transform = 'scale(0.85) translate(-50%, -100%)';
                 clone.style.pointerEvents = 'none';
                 document.body.appendChild(clone);
@@ -338,7 +327,6 @@
                 const touch = e.touches ? e.touches[0] : e;
                 updateClonePos(touch.clientX, touch.clientY, clone);
                 
-                // Проверяем попадание по реальному положению верхнего левого угла фигуры
                 const pieceRect = boardEl.getBoundingClientRect();
                 const cellWidth = pieceRect.width / BOARD_SIZE;
                 
@@ -375,15 +363,10 @@
                     dockEl.innerHTML = '';
                     checkBoardClears();
 
-                    if (gameMode === 'infinite') {
-                        currentPieces[index] = getRandomPiece();
-                        renderPieces();
+                    if (currentPieces.every(p => p === null)) {
+                        generatePieces();
                     } else {
-                        if (currentPieces.every(p => p === null)) {
-                            generatePieces();
-                        } else {
-                            checkGameOver();
-                        }
+                        checkGameOver();
                     }
                 }
             };
@@ -483,10 +466,8 @@
                 }
             }
 
-            if (gameMode !== 'time') {
-                score += count * 10;
-                updateScore();
-            }
+            score += count * 10;
+            updateScore();
             renderBoard();
             return true;
         }
@@ -516,6 +497,16 @@
             }
         }
 
+        function showComboPopup(text, x, y) {
+            const popup = document.createElement('div');
+            popup.className = 'combo-popup text-amber-300 text-2xl';
+            popup.textContent = text;
+            popup.style.left = `${x}px`;
+            popup.style.top = `${y}px`;
+            document.body.appendChild(popup);
+            setTimeout(() => popup.remove(), 800);
+        }
+
         function checkBoardClears() {
             let rowsToClear = [];
             let colsToClear = [];
@@ -535,6 +526,9 @@
             if (rowsToClear.length > 0 || colsToClear.length > 0) {
                 AudioFX.play('clear');
 
+                const boardRect = boardEl.getBoundingClientRect();
+                showComboPopup(`КОМБО x${rowsToClear.length + colsToClear.length}!`, boardRect.left + boardRect.width / 2 - 50, boardRect.top + boardRect.height / 2 - 20);
+
                 rowsToClear.forEach(r => {
                     for (let c = 0; c < BOARD_SIZE; c++) {
                         const idx = r * BOARD_SIZE + c;
@@ -552,12 +546,7 @@
                 });
 
                 const clearedCount = rowsToClear.length + colsToClear.length;
-                if (gameMode === 'time') {
-                    timeLeft += clearedCount * 5;
-                    score += clearedCount * 50;
-                } else {
-                    score += clearedCount * 60 * (clearedCount > 1 ? clearedCount : 1);
-                }
+                score += clearedCount * 60 * (clearedCount > 1 ? clearedCount : 1);
                 updateScore();
                 renderBoard();
             }
@@ -583,7 +572,6 @@
         }
 
         function checkGameOver() {
-            if (gameMode === 'infinite') return;
             const availablePieces = currentPieces.filter(p => p !== null);
             if (availablePieces.length === 0) return;
 
@@ -594,26 +582,23 @@
         }
 
         function triggerGameOver(reason) {
-            if (timerInterval) clearInterval(timerInterval);
             AudioFX.play('gameover');
             document.getElementById('game-over-reason').textContent = reason;
-            finalScoreEl.textContent = gameMode === 'time' ? timeLeft : score;
+            finalScoreEl.textContent = score;
             modalEl.classList.remove('hidden');
         }
 
         function updateScore() {
-            if (gameMode !== 'time') {
-                scoreEl.textContent = score;
-                if (score > bestScore) {
-                    bestScore = score;
-                    bestScoreEl.textContent = bestScore;
-                    localStorage.setItem('block_blast_best', bestScore);
-                }
+            scoreEl.textContent = score;
+            if (score > bestScore) {
+                bestScore = score;
+                bestScoreEl.textContent = bestScore;
+                localStorage.setItem('block_blast_best', bestScore);
             }
         }
 
         document.getElementById('restart-btn').addEventListener('click', () => {
-            startGame(gameMode);
+            startGame('classic');
         });
     </script>
 </body>
