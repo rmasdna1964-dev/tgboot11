@@ -319,7 +319,8 @@
                 clone = dockEl.firstElementChild.cloneNode(true);
                 clone.style.position = 'fixed';
                 clone.style.zIndex = '1000';
-                clone.style.transform = 'scale(0.85) translateY(-70px)';
+                // Смещаем фигуру выше пальца, чтобы она не закрывала обзор
+                clone.style.transform = 'scale(0.85) translate(-50%, -135%)';
                 clone.style.pointerEvents = 'none';
                 document.body.appendChild(clone);
 
@@ -336,13 +337,28 @@
                 e.preventDefault();
                 const touch = e.touches ? e.touches[0] : e;
                 updateClonePos(touch.clientX, touch.clientY, clone);
-                highlightHover(touch.clientX, touch.clientY, currentPieces[index]);
+                
+                // Передаем координаты верхней левой точки самой фигуры для подсветки
+                const pieceRect = boardEl.getBoundingClientRect();
+                const cellWidth = pieceRect.width / BOARD_SIZE;
+                
+                // Вычисляем точку привязки относительно пальца с учетом смещения
+                const checkX = touch.clientX;
+                const checkY = touch.clientY - (cellWidth * 2.5);
+                
+                highlightHover(checkX, checkY, currentPieces[index]);
             };
 
             const onEnd = (e) => {
                 if (!clone) return;
                 const touch = e.changedTouches ? e.changedTouches[0] : e;
-                const dropped = tryDropPiece(touch.clientX, touch.clientY, index);
+                
+                const pieceRect = boardEl.getBoundingClientRect();
+                const cellWidth = pieceRect.width / BOARD_SIZE;
+                const checkX = touch.clientX;
+                const checkY = touch.clientY - (cellWidth * 2.5);
+
+                const dropped = tryDropPiece(checkX, checkY, index);
 
                 clone.remove();
                 clone = null;
@@ -377,8 +393,8 @@
         }
 
         function updateClonePos(x, y, clone) {
-            clone.style.left = `${x - 45}px`;
-            clone.style.top = `${y - 70}px`;
+            clone.style.left = `${x}px`;
+            clone.style.top = `${y}px`;
         }
 
         function getTargetBoardCell(x, y) {
