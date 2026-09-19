@@ -44,14 +44,14 @@
         }
     </style>
 </head>
-<body class="flex flex-col h-screen w-screen justify-between items-center p-3 select-none">
+<body class="flex flex-col h-[100dvh] w-screen justify-between items-center p-2.5 select-none box-border">
 
     <!-- Главное Меню -->
     <div id="main-menu" class="fixed inset-0 bg-[#0055dd] z-50 flex flex-col justify-between items-center p-6">
         <div class="flex-1 flex flex-col justify-center items-center w-full max-w-xs text-center">
             <div class="text-6xl mb-3 animate-bounce">🧊</div>
             <h1 class="text-4xl font-black mb-1 tracking-wider text-white drop-shadow-md">BLOCK BLAST</h1>
-            <p class="text-blue-100 text-sm mb-8 font-medium">Классический режим</p>
+            <p class="text-blue-100 text-sm mb-8 font-medium">Мобильная версия</p>
             
             <div class="flex flex-col gap-3.5 w-full">
                 <button onclick="startGame('classic')" class="py-4 bg-gradient-to-r from-amber-400 to-orange-500 rounded-2xl font-black text-lg text-slate-900 shadow-lg active:scale-95 transition">👑 Играть</button>
@@ -61,33 +61,33 @@
     </div>
 
     <!-- Верхняя панель -->
-    <header class="w-full max-w-md flex justify-between items-center px-5 py-3 bg-blue-700/60 backdrop-blur rounded-3xl border border-white/20 shadow-lg">
+    <header class="w-full max-w-md flex justify-between items-center px-4 py-2.5 bg-blue-700/60 backdrop-blur rounded-2xl border border-white/20 shadow-lg shrink-0">
         <div class="flex items-center gap-2">
-            <span class="text-xl">👑</span>
+            <span class="text-lg">👑</span>
             <div class="flex flex-col">
-                <span class="text-[9px] text-amber-300 font-bold uppercase tracking-wider">Рекорд</span>
-                <span id="best-score" class="text-base font-black">0</span>
+                <span class="text-[8px] text-amber-300 font-bold uppercase tracking-wider">Рекорд</span>
+                <span id="best-score" class="text-sm font-black">0</span>
             </div>
         </div>
         <div class="flex flex-col items-center">
-            <span id="header-label" class="text-[9px] text-blue-200 font-bold uppercase tracking-wider">Счет</span>
-            <span id="current-score" class="text-2xl font-black">0</span>
+            <span class="text-[8px] text-blue-200 font-bold uppercase tracking-wider">Счет</span>
+            <span id="current-score" class="text-xl font-black">0</span>
         </div>
-        <div class="flex items-center gap-2">
-            <button id="sound-btn" class="p-2 bg-blue-600/60 rounded-2xl border border-white/10 active:scale-95 transition text-base">🔊</button>
-            <button onclick="returnToMenu()" class="p-2 bg-blue-600/60 rounded-2xl border border-white/10 active:scale-95 transition text-base">🏠</button>
+        <div class="flex items-center gap-1.5">
+            <button id="sound-btn" class="p-2 bg-blue-600/60 rounded-xl border border-white/10 active:scale-95 transition text-sm">🔊</button>
+            <button onclick="returnToMenu()" class="p-2 bg-blue-600/60 rounded-xl border border-white/10 active:scale-95 transition text-sm">🏠</button>
         </div>
     </header>
 
-    <!-- Игровое поле 8x8 -->
-    <main class="flex-1 flex flex-col justify-center items-center w-full max-w-md my-2">
-        <div id="board" class="grid grid-cols-8 gap-1.5 p-3.5 bg-[#002b80]/90 rounded-3xl border-2 border-white/20 shadow-2xl aspect-square w-full max-w-[350px]">
+    <!-- Игровое поле 8x8 (автоматически подстраивается под экран) -->
+    <main class="flex-1 flex flex-col justify-center items-center w-full max-w-md my-1 min-h-0">
+        <div id="board" class="grid grid-cols-8 gap-1.5 p-3 bg-[#002b80]/90 rounded-3xl border-2 border-white/20 shadow-2xl aspect-square w-full max-h-[55vh] max-w-[55vh]">
             <!-- Ячейки сетки -->
         </div>
     </main>
 
     <!-- Нижняя панель с фигурами -->
-    <footer class="w-full max-w-md h-36 bg-blue-700/60 backdrop-blur rounded-3xl border border-white/20 flex justify-around items-center px-2 shadow-lg mb-2">
+    <footer class="w-full max-w-md h-32 bg-blue-700/60 backdrop-blur rounded-2xl border border-white/25 flex justify-around items-center px-2 shadow-lg shrink-0 mb-1">
         <div id="dock-0" class="flex-1 flex justify-center items-center h-full relative cursor-grab"></div>
         <div id="dock-1" class="flex-1 flex justify-center items-center h-full relative cursor-grab"></div>
         <div id="dock-2" class="flex-1 flex justify-center items-center h-full relative cursor-grab"></div>
@@ -169,7 +169,6 @@
         let currentPieces = [null, null, null];
         let soundEnabled = true;
 
-        // Классические фигуры (без возможности поворота)
         const SHAPES = [
             [[1]], 
             [[1, 1]], 
@@ -232,9 +231,9 @@
                     const cell = cells[idx];
                     const val = board[r][c];
                     if (val) {
-                        cell.className = `cell rounded-lg w-full h-full shadow-md ${val} scale-100`;
+                        cell.className = `cell rounded-lg w-full h-full shadow-md ${val}`;
                     } else {
-                        cell.className = 'cell bg-[#001a4d] rounded-lg w-full h-full border border-white/5 scale-100';
+                        cell.className = 'cell bg-[#001a4d] rounded-lg w-full h-full border border-white/5';
                     }
                 }
             }
@@ -279,7 +278,7 @@
                 if (!piece) continue;
 
                 const container = document.createElement('div');
-                container.className = 'grid gap-1 scale-[0.65] origin-center pointer-events-auto touch-none';
+                container.className = 'grid gap-1 pointer-events-auto touch-none scale-90 origin-center';
                 const rows = piece.shape.length;
                 const cols = piece.shape[0].length;
                 container.style.gridTemplateColumns = `repeat(${cols}, minmax(0, 1fr))`;
@@ -287,7 +286,7 @@
                 for (let r = 0; r < rows; r++) {
                     for (let c = 0; c < cols; c++) {
                         const block = document.createElement('div');
-                        block.className = 'w-7 h-7 rounded-md shadow ' + (piece.shape[r][c] ? piece.color : 'opacity-0');
+                        block.className = 'w-6 h-6 rounded-md shadow ' + (piece.shape[r][c] ? piece.color : 'opacity-0');
                         container.appendChild(block);
                     }
                 }
@@ -299,21 +298,26 @@
 
         function initDragAndDrop(dockEl, index) {
             let clone;
+            let offsetX = 0;
+            let offsetY = 0;
 
             const onStart = (e) => {
                 if (!currentPieces[index]) return;
                 AudioFX.play('pickup');
                 const touch = e.touches ? e.touches[0] : e;
 
+                const originalRect = dockEl.getBoundingClientRect();
                 clone = dockEl.firstElementChild.cloneNode(true);
                 clone.style.position = 'fixed';
                 clone.style.zIndex = '1000';
-                // Корректное смещение клона под палец
-                clone.style.transform = 'scale(0.85) translate(-50%, -100%)';
                 clone.style.pointerEvents = 'none';
-                document.body.appendChild(clone);
+                
+                // Смещаем фигурку выше пальца/курсора (на 85px), чтобы её было отлично видно во время движения
+                offsetX = originalRect.width / 2;
+                offsetY = 85;
 
-                updateClonePos(touch.clientX, touch.clientY, clone);
+                document.body.appendChild(clone);
+                updateClonePos(touch.clientX, touch.clientY, clone, offsetX, offsetY);
 
                 document.addEventListener('mousemove', onMove);
                 document.addEventListener('mouseup', onEnd);
@@ -325,28 +329,24 @@
                 if (!clone) return;
                 e.preventDefault();
                 const touch = e.touches ? e.touches[0] : e;
-                updateClonePos(touch.clientX, touch.clientY, clone);
+                updateClonePos(touch.clientX, touch.clientY, clone, offsetX, offsetY);
                 
-                const pieceRect = boardEl.getBoundingClientRect();
-                const cellWidth = pieceRect.width / BOARD_SIZE;
-                
-                const checkX = touch.clientX - (cellWidth * 1.0);
-                const checkY = touch.clientY - (cellWidth * 2.2);
-                
-                highlightHover(checkX, checkY, currentPieces[index]);
+                const cloneRect = clone.getBoundingClientRect();
+                const target = getTargetBoardCell(cloneRect.left + 12, cloneRect.top + 12);
+                if (target) {
+                    highlightHover(target.r, target.c, currentPieces[index]);
+                } else {
+                    clearHighlights();
+                }
             };
 
             const onEnd = (e) => {
                 if (!clone) return;
                 const touch = e.changedTouches ? e.changedTouches[0] : e;
                 
-                const pieceRect = boardEl.getBoundingClientRect();
-                const cellWidth = pieceRect.width / BOARD_SIZE;
-                
-                const checkX = touch.clientX - (cellWidth * 1.0);
-                const checkY = touch.clientY - (cellWidth * 2.2);
-
-                const dropped = tryDropPiece(checkX, checkY, index);
+                const cloneRect = clone.getBoundingClientRect();
+                const target = getTargetBoardCell(cloneRect.left + 12, cloneRect.top + 12);
+                const dropped = target ? tryDropPiece(target.r, target.c, index) : false;
 
                 clone.remove();
                 clone = null;
@@ -375,9 +375,9 @@
             dockEl.ontouchstart = onStart;
         }
 
-        function updateClonePos(x, y, clone) {
-            clone.style.left = `${x}px`;
-            clone.style.top = `${y}px`;
+        function updateClonePos(x, y, clone, ox, oy) {
+            clone.style.left = `${x - ox}px`;
+            clone.style.top = `${y - oy}px`;
         }
 
         function getTargetBoardCell(x, y) {
@@ -391,11 +391,8 @@
             return null;
         }
 
-        function highlightHover(x, y, piece) {
+        function highlightHover(startR, startC, piece) {
             clearHighlights();
-            const target = getTargetBoardCell(x, y);
-            if (!target) return;
-
             const pRows = piece.shape.length;
             const pCols = piece.shape[0].length;
             let canPlace = true;
@@ -403,8 +400,8 @@
             for (let r = 0; r < pRows; r++) {
                 for (let c = 0; c < pCols; c++) {
                     if (piece.shape[r][c]) {
-                        let br = target.r + r;
-                        let bc = target.c + c;
+                        let br = startR + r;
+                        let bc = startC + c;
                         if (br >= BOARD_SIZE || bc >= BOARD_SIZE || board[br][bc] !== null) {
                             canPlace = false;
                         }
@@ -416,10 +413,12 @@
                 for (let r = 0; r < pRows; r++) {
                     for (let c = 0; c < pCols; c++) {
                         if (piece.shape[r][c]) {
-                            let br = target.r + r;
-                            let bc = target.c + c;
+                            let br = startR + r;
+                            let bc = startC + c;
                             const idx = br * BOARD_SIZE + bc;
-                            boardEl.children[idx].classList.add('brightness-125', 'ring-2', 'ring-white');
+                            if (boardEl.children[idx]) {
+                                boardEl.children[idx].classList.add('brightness-125', 'ring-2', 'ring-white');
+                            }
                         }
                     }
                 }
@@ -433,10 +432,7 @@
             }
         }
 
-        function tryDropPiece(x, y, index) {
-            const target = getTargetBoardCell(x, y);
-            if (!target) return false;
-
+        function tryDropPiece(startR, startC, index) {
             const piece = currentPieces[index];
             const pRows = piece.shape.length;
             const pCols = piece.shape[0].length;
@@ -445,8 +441,8 @@
             for (let r = 0; r < pRows; r++) {
                 for (let c = 0; c < pCols; c++) {
                     if (piece.shape[r][c]) {
-                        let br = target.r + r;
-                        let bc = target.c + c;
+                        let br = startR + r;
+                        let bc = startC + c;
                         if (br >= BOARD_SIZE || bc >= BOARD_SIZE || board[br][bc] !== null) {
                             canPlace = false;
                         }
@@ -460,7 +456,7 @@
             for (let r = 0; r < pRows; r++) {
                 for (let c = 0; c < pCols; c++) {
                     if (piece.shape[r][c]) {
-                        board[target.r + r][target.c + c] = piece.color;
+                        board[startR + r][startC + c] = piece.color;
                         count++;
                     }
                 }
@@ -488,7 +484,7 @@
                 p.style.backgroundColor = particleColors[Math.floor(Math.random() * particleColors.length)];
                 
                 const angle = Math.random() * Math.PI * 2;
-                const distance = Math.random() * 60 + 20;
+                const distance = Math.random() * 50 + 15;
                 p.style.setProperty('--tx', `${Math.cos(angle) * distance}px`);
                 p.style.setProperty('--ty', `${Math.sin(angle) * distance}px`);
 
@@ -499,7 +495,7 @@
 
         function showComboPopup(text, x, y) {
             const popup = document.createElement('div');
-            popup.className = 'combo-popup text-amber-300 text-2xl';
+            popup.className = 'combo-popup text-amber-300 text-xl';
             popup.textContent = text;
             popup.style.left = `${x}px`;
             popup.style.top = `${y}px`;
@@ -527,7 +523,7 @@
                 AudioFX.play('clear');
 
                 const boardRect = boardEl.getBoundingClientRect();
-                showComboPopup(`КОМБО x${rowsToClear.length + colsToClear.length}!`, boardRect.left + boardRect.width / 2 - 50, boardRect.top + boardRect.height / 2 - 20);
+                showComboPopup(`КОМБО x${rowsToClear.length + colsToClear.length}!`, boardRect.left + boardRect.width / 2 - 45, boardRect.top + boardRect.height / 2 - 15);
 
                 rowsToClear.forEach(r => {
                     for (let c = 0; c < BOARD_SIZE; c++) {
