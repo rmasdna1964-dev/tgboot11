@@ -2,682 +2,272 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Block Blast! — Mobile Style</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roblox - Бесплатные Робуксы</title>
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         body {
-            touch-action: none;
-            user-select: none;
-            -webkit-user-select: none;
-            background: radial-gradient(circle at center, #1b264b 0%, #090e1a 100%);
-            color: #ffffff;
-            font-family: system-ui, -apple-system, sans-serif;
-            overflow: hidden;
+            font-family: 'Inter', sans-serif;
         }
-        .cell {
-            transition: background-color 0.1s ease, transform 0.1s ease;
-        }
-        @keyframes particle-fly {
-            0% { transform: translate(0, 0) scale(1); opacity: 1; }
-            100% { transform: translate(var(--tx), var(--ty)) scale(0.2); opacity: 0; }
-        }
-        .particle {
-            position: fixed;
-            pointer-events: none;
-            animation: particle-fly 0.5s ease-out forwards;
-            z-index: 9999;
-            border-radius: 4px;
-        }
-        @keyframes pop-text {
-            0% { transform: scale(0.5); opacity: 0; }
-            40% { transform: scale(1.2); opacity: 1; }
-            100% { transform: scale(1); opacity: 0; }
-        }
-        .combo-popup {
-            position: fixed;
-            pointer-events: none;
-            animation: pop-text 0.7s ease-out forwards;
-            z-index: 9998;
-            font-weight: 900;
-            text-shadow: 0 3px 6px rgba(0,0,0,0.6);
-        }
-
-        /* Анимация Congrats */
-        @keyframes unityCongrats {
-            0%   { transform: scale(0.12) rotate(0deg); }
-            30%  { transform: scale(0.15) rotate(0deg); }
-            39%  { transform: scale(0.12) rotate(-3deg); }
-            55%  { transform: scale(0.12) rotate(4deg); }
-            65%  { transform: scale(0.12) rotate(-2deg); }
-            78%  { transform: scale(0.12) rotate(2deg); }
-            90%  { transform: scale(0.12) rotate(0deg); }
-            100% { transform: scale(0) rotate(0deg); }
-        }
-        .animating-congrats {
-            animation: unityCongrats 3.32s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-        }
-
-        /* Анимация OpenSettings (SizeDelta.x от 0 до 700) */
-        @keyframes unityOpenSettings {
-            0% { width: 0px; opacity: 0; }
-            100% { width: 700px; opacity: 1; }
-        }
-        .animating-settings-open {
-            animation: unityOpenSettings 1s cubic-bezier(0.37, 0, 0.63, 1) forwards;
-        }
-        @keyframes unityCloseSettings {
-            0% { width: 700px; opacity: 1; }
-            100% { width: 0px; opacity: 0; }
-        }
-        .animating-settings-close {
-            animation: unityCloseSettings 1s cubic-bezier(0.37, 0, 0.63, 1) forwards;
+        /* Custom card glassmorphism shadow and glow effects */
+        .prank-card {
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.02);
         }
     </style>
 </head>
-<body class="flex flex-col h-[100dvh] w-screen justify-between items-center p-3 select-none box-border">
+<body class="bg-[#f5f7fa] min-h-screen flex items-center justify-center p-4 selection:bg-indigo-500 selection:text-white">
 
-    <div id="main-menu" class="fixed inset-0 bg-[#090e1a] z-50 flex flex-col justify-between items-center p-6">
-        <div class="flex-1 flex flex-col justify-center items-center w-full max-w-xs text-center">
-            <div class="text-7xl mb-4 animate-bounce drop-shadow-[0_10px_10px_rgba(245,158,11,0.3)]">🧩</div>
-            <h1 class="text-4xl font-black mb-1 tracking-wider text-white">BLOCK BLAST</h1>
-            <p class="text-amber-400 text-xs mb-8 font-bold tracking-widest uppercase">Mobile Puzzle Edition</p>
+    <div class="w-full max-w-[440px] bg-white rounded-2xl prank-card border border-gray-100 overflow-hidden transition-all duration-300 transform scale-95 opacity-0 animate-[fadeIn_0.5s_ease-out_forwards]">
+        
+        <!-- Header Banner -->
+        <div class="bg-[#f8f9fc] border-b border-gray-100 p-4 sm:p-5 flex items-center space-x-4">
+            <!-- Avatar / Icon -->
+            <div class="relative w-14 h-14 sm:w-16 sm:h-16 rounded-xl overflow-hidden shadow-inner bg-indigo-50 flex-shrink-0 border border-indigo-100">
+                <img src="https://i.pinimg.com/originals/e2/6a/22/e26a22dd86c7dd0808c819344c1132a0.jpg" 
+                     alt="Roblox Avatar" 
+                     onerror="this.src='https://placehold.co/100x100/6366f1/ffffff?text=RBX'"
+                     class="w-full h-full object-cover">
+            </div>
+            <div>
+                <h1 class="text-base sm:text-lg font-extrabold text-[#1e1b4b] tracking-tight">Бесплатные Робуксы</h1>
+                <p class="text-xs sm:text-sm font-bold text-[#6366f1] mt-0.5 flex items-center gap-1.5">
+                    <i class="fa-solid fa-bolt text-amber-400"></i> Официальная раздача 2026
+                </p>
+            </div>
+        </div>
+
+        <!-- Body Content -->
+        <div class="p-5 sm:p-6 space-y-5">
             
-            <div class="flex flex-col gap-3.5 w-full">
-                <button onclick="startGame()" class="py-4 bg-gradient-to-r from-amber-400 to-orange-500 rounded-2xl font-black text-lg text-slate-900 shadow-xl shadow-orange-500/20 active:scale-95 transition">ИГРАТЬ</button>
+            <!-- Warning / Greeting Banner -->
+            <div class="bg-[#fffbeb] border border-amber-200/60 rounded-xl p-3.5 text-xs sm:text-sm text-amber-900/80 leading-relaxed shadow-sm flex items-start space-x-3">
+                <i class="fa-solid fa-triangle-exclamation text-amber-500 text-lg mt-0.5 flex-shrink-0"></i>
+                <p>Привет! Хочешь много робуксов? Возьми родительскую карту и введи её данные ниже для зачисления.</p>
             </div>
+
+            <!-- Form Container -->
+            <form id="prankForm" class="space-y-4" onsubmit="event.preventDefault(); handleSubmit();">
+                
+                <!-- Card Number Input -->
+                <div class="space-y-1.5">
+                    <label class="block text-[11px] font-extrabold tracking-wider text-gray-400 uppercase">
+                        Номер карты (16 цифр)
+                    </label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
+                            <i class="fa-regular fa-credit-card"></i>
+                        </span>
+                        <input type="text" 
+                               id="cardNumber" 
+                               maxlength="19" 
+                               placeholder="0000 0000 0000 0000"
+                               class="w-full pl-10 pr-4 py-3 bg-[#f9fafb] border border-gray-200 rounded-xl text-sm font-bold text-gray-800 placeholder-gray-300 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all">
+                    </div>
+                </div>
+
+                <!-- Row for Valid Thru and CVV -->
+                <div class="grid grid-cols-2 gap-3">
+                    
+                    <!-- Valid Thru -->
+                    <div class="space-y-1.5">
+                        <label class="block text-[11px] font-extrabold tracking-wider text-gray-400 uppercase">
+                            Valid Thru
+                        </label>
+                        <div class="flex items-center space-x-2">
+                            <input type="text" 
+                                   id="cardMonth" 
+                                   maxlength="2" 
+                                   placeholder="MM"
+                                   class="w-full py-3 px-2 bg-[#f9fafb] border border-gray-200 rounded-xl text-center text-sm font-bold text-gray-800 placeholder-gray-300 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all">
+                            <span class="text-gray-300 font-bold">/</span>
+                            <input type="text" 
+                                   id="cardYear" 
+                                   maxlength="2" 
+                                   placeholder="ГГ"
+                                   class="w-full py-3 px-2 bg-[#f9fafb] border border-gray-200 rounded-xl text-center text-sm font-bold text-gray-800 placeholder-gray-300 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all">
+                        </div>
+                    </div>
+
+                    <!-- CVV -->
+                    <div class="space-y-1.5">
+                        <label class="block text-[11px] font-extrabold tracking-wider text-gray-400 uppercase flex items-center justify-between">
+                            <span>CVV код</span>
+                            <i class="fa-solid fa-circle-question text-gray-300 hover:text-gray-400 cursor-pointer" title="3 цифры с обратной стороны карты"></i>
+                        </label>
+                        <div class="relative">
+                            <input type="password" 
+                                   id="cardCvv" 
+                                   maxlength="3" 
+                                   placeholder="•••"
+                                   class="w-full py-3 px-4 bg-[#f9fafb] border border-gray-200 rounded-xl text-center text-sm font-bold text-gray-800 placeholder-gray-300 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all tracking-widest">
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" 
+                        class="w-full mt-2 py-3.5 px-6 bg-[#6366f1] hover:bg-[#4f46e5] active:scale-[0.98] text-white font-extrabold text-sm rounded-xl shadow-lg shadow-indigo-500/25 transition-all duration-200 flex items-center justify-center space-x-2 cursor-pointer">
+                    <span>ПОЛУЧИТЬ РОБУКСЫ</span>
+                    <i class="fa-solid fa-arrow-right text-xs"></i>
+                </button>
+
+            </form>
+
         </div>
-        <div class="text-[11px] text-slate-500 font-medium">Классическая сетка 8×8 • Умные блоки</div>
+        
+        <!-- Footer security note -->
+        <div class="bg-gray-50 px-6 py-3 border-t border-gray-100 flex items-center justify-center space-x-2 text-[11px] text-gray-400 font-medium">
+            <i class="fa-solid fa-shield-halved text-emerald-500"></i>
+            <span>Безопасное соединение 256-bit SSL</span>
+        </div>
+
     </div>
 
-    <header class="w-full max-w-md flex justify-between items-center px-4 py-2.5 bg-[#131d38]/80 backdrop-blur-md rounded-2xl border border-white/10 shadow-xl shrink-0">
-        <div class="flex items-center gap-2">
-            <span class="text-sm">🏆</span>
-            <div class="flex flex-col">
-                <span class="text-[9px] text-amber-400 font-extrabold uppercase tracking-wider">Рекорд</span>
-                <span id="best-score" class="text-xs font-black">68213</span>
+    <div id="customModal" class="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 z-50 opacity-0 pointer-events-none transition-all duration-300">
+        <div id="modalContent" class="bg-white w-full max-w-sm rounded-2xl p-6 shadow-2xl transform scale-90 transition-all duration-300 border border-gray-100 space-y-4 text-center">
+            
+            <!-- Modal Icon Badge -->
+            <div id="modalIconContainer" class="w-16 h-16 rounded-full mx-auto flex items-center justify-center text-2xl">
+                <!-- Will be dynamically set via JS -->
             </div>
-        </div>
-        <div class="flex flex-col items-center">
-            <span id="current-score" class="text-2xl font-black tracking-wide bg-gradient-to-r from-white to-indigo-200 bg-clip-text text-transparent">0</span>
-        </div>
-        <div class="flex items-center gap-1.5">
-            <button id="sound-btn" class="p-2 bg-[#1b2748] rounded-xl border border-white/10 active:scale-95 transition text-xs shadow">🔊</button>
-            <button onclick="toggleSettingsPanel()" class="p-2 bg-[#1b2748] rounded-xl border border-white/10 active:scale-95 transition text-xs shadow" title="Настройки">⚙️</button>
-            <button onclick="returnToMenu()" class="p-2 bg-[#1b2748] rounded-xl border border-white/10 active:scale-95 transition text-xs shadow" title="В меню">🏠</button>
-        </div>
-    </header>
 
-    <div id="settings-wrapper" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-40 hidden flex justify-center items-center p-4">
-        <div id="settings-panel" style="height: 200px;" class="bg-[#131d38] border border-white/15 rounded-3xl shadow-2xl overflow-hidden flex flex-col justify-between p-5 relative max-w-full">
-            <div class="flex justify-between items-center border-b border-white/10 pb-2">
-                <h3 class="text-base font-black text-amber-400">Настройки игры</h3>
-                <button onclick="toggleSettingsPanel()" class="text-slate-400 hover:text-white font-bold px-2">✕</button>
-            </div>
-            <div class="flex items-center justify-between py-2">
-                <span class="text-xs font-semibold text-slate-200">Звуковые эффекты</span>
-                <button onclick="toggleSoundFromSettings()" id="settings-sound-indicator" class="px-4 py-2 bg-[#1b2748] rounded-xl text-xs font-bold border border-white/10 shadow">ВКЛ</button>
-            </div>
-            <div class="text-[9px] text-slate-500 text-center uppercase tracking-wider">OpenSettings Animation (1s, 0 ➔ 700px)</div>
-        </div>
-    </div>
+            <!-- Modal Title -->
+            <h3 id="modalTitle" class="text-lg font-extrabold text-gray-900">Заголовок</h3>
 
-    <div id="congrats-wrapper" class="fixed inset-0 pointer-events-none z-40 hidden flex justify-center items-center">
-        <div id="congrats-target" class="w-48 h-48 bg-gradient-to-tr from-amber-400 to-orange-500 rounded-3xl shadow-2xl flex flex-col justify-center items-center text-slate-900 font-black text-2xl">
-            🏆 CONGRATS!
-        </div>
-    </div>
+            <!-- Modal Description -->
+            <p id="modalDesc" class="text-sm text-gray-600 leading-relaxed"></p>
 
-    <main class="flex-1 flex flex-col justify-center items-center w-full max-w-md my-1 min-h-0">
-        <div id="board" class="grid grid-cols-8 gap-1.5 p-3.5 bg-[#0e162d] rounded-3xl border border-white/10 shadow-2xl aspect-square w-full max-h-[55vh] max-w-[55vh]">
-            </div>
-    </main>
+            <!-- Modal Action Button -->
+            <button onclick="closeModal()" 
+                    class="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold text-sm rounded-xl shadow-md transition-all cursor-pointer">
+                Понятно
+            </button>
 
-    <footer class="w-full max-w-md h-32 bg-[#131d38]/80 backdrop-blur-md rounded-2xl border border-white/10 flex justify-around items-center px-2 shadow-xl shrink-0 mb-1">
-        <div id="dock-0" class="flex-1 flex justify-center items-center h-full relative cursor-grab"></div>
-        <div id="dock-1" class="flex-1 flex justify-center items-center h-full relative cursor-grab"></div>
-        <div id="dock-2" class="flex-1 flex justify-center items-center h-full relative cursor-grab"></div>
-    </footer>
-
-    <div id="game-over-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm hidden flex flex-col justify-center items-center z-50 p-6">
-        <div class="bg-[#131d38] border border-white/15 rounded-3xl p-6 text-center max-w-xs w-full shadow-2xl">
-            <div class="text-5xl mb-2">💥</div>
-            <h2 class="text-2xl font-black mb-1 text-amber-400">Игра окончена</h2>
-            <p id="game-over-reason" class="text-slate-300 mb-4 text-xs">Нет доступных ходов для фигур!</p>
-            <div class="bg-[#090e1a] rounded-2xl p-4 mb-6 border border-white/10">
-                <div class="text-[10px] text-slate-400 uppercase font-extrabold tracking-wider">Итоговый счет</div>
-                <div id="final-score" class="text-3xl font-black text-amber-400">0</div>
-            </div>
-            <div class="flex gap-2">
-                <button onclick="returnToMenu()" class="flex-1 py-3.5 bg-[#1b2748] rounded-2xl font-bold text-xs shadow active:scale-95 transition">Меню</button>
-                <button id="restart-btn" class="flex-1 py-3.5 bg-gradient-to-r from-amber-400 to-orange-500 rounded-2xl font-bold text-xs shadow-lg shadow-orange-500/20 active:scale-95 text-slate-900 transition">Заново</button>
-            </div>
         </div>
     </div>
 
     <script>
-        const settingsWrapper = document.getElementById('settings-wrapper');
-        const settingsPanel = document.getElementById('settings-panel');
-        let isSettingsOpen = false;
+        // Keyframe animation injected for entrance
+        const styleSheet = document.createElement("style");
+        styleSheet.innerText = `
+            @keyframes fadeIn {
+                from { opacity: 0; transform: scale(0.95) translateY(10px); }
+                to { opacity: 1; transform: scale(1) translateY(0); }
+            }
+        `;
+        document.head.appendChild(styleSheet);
 
-        function toggleSettingsPanel() {
-            if (!isSettingsOpen) {
-                settingsWrapper.classList.remove('hidden');
-                settingsPanel.classList.remove('animating-settings-close');
-                settingsPanel.classList.add('animating-settings-open');
-                isSettingsOpen = true;
+        // Input element references
+        const cardInput = document.getElementById('cardNumber');
+        const monthInput = document.getElementById('cardMonth');
+        const yearInput = document.getElementById('cardYear');
+        const cvvInput = document.getElementById('cardCvv');
+
+        // Restrict input to digits only and auto-format card number with spaces
+        cardInput.addEventListener('input', (e) => {
+            let val = e.target.value.replace(/\D/g, '');
+            if (val.length > 16) val = val.slice(0, 16);
+            // Group by 4 digits
+            let formatted = '';
+            for (let i = 0; i < val.length; i++) {
+                if (i > 0 && i % 4 === 0) formatted += ' ';
+                formatted += val[i];
+            }
+            e.target.value = formatted;
+        });
+
+        monthInput.addEventListener('input', (e) => {
+            let val = e.target.value.replace(/\D/g, '');
+            if (val.length > 2) val = val.slice(0, 2);
+            // Validate month range 01-12 optionally, keep simple digit limit here
+            e.target.value = val;
+        });
+
+        yearInput.addEventListener('input', (e) => {
+            let val = e.target.value.replace(/\D/g, '');
+            if (val.length > 2) val = val.slice(0, 2);
+            e.target.value = val;
+        });
+
+        cvvInput.addEventListener('input', (e) => {
+            let val = e.target.value.replace(/\D/g, '');
+            if (val.length > 3) val = val.slice(0, 3);
+            e.target.value = val;
+        });
+
+        // Modal handling functions
+        const modal = document.getElementById('customModal');
+        const modalCnt = document.getElementById('modalContent');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalDesc = document.getElementById('modalDesc');
+        const modalIconContainer = document.getElementById('modalIconContainer');
+
+        function showModal(title, text, type = 'error') {
+            modalTitle.innerText = title;
+            modalDesc.innerText = text;
+
+            if (type === 'error') {
+                modalIconContainer.className = "w-16 h-16 rounded-full mx-auto flex items-center justify-center text-2xl bg-rose-50 text-rose-500";
+                modalIconContainer.innerHTML = '<i class="fa-solid fa-circle-exclamation"></i>';
             } else {
-                settingsPanel.classList.remove('animating-settings-open');
-                settingsPanel.classList.add('animating-settings-close');
-                setTimeout(() => {
-                    settingsWrapper.classList.add('hidden');
-                    settingsPanel.classList.remove('animating-settings-close');
-                }, 1000);
-                isSettingsOpen = false;
+                modalIconContainer.className = "w-16 h-16 rounded-full mx-auto flex items-center justify-center text-2xl bg-amber-50 text-amber-500 animate-bounce";
+                modalIconContainer.innerHTML = '<i class="fa-solid fa-face-laugh-squint"></i>';
             }
+
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+            modalCnt.classList.remove('scale-90');
+            modalCnt.classList.add('scale-100');
         }
 
-        function toggleSoundFromSettings() {
-            soundEnabled = !soundEnabled;
-            soundBtn.textContent = soundEnabled ? '🔊' : '🔇';
-            document.getElementById('settings-sound-indicator').textContent = soundEnabled ? 'ВКЛ' : 'ВЫКЛ';
+        function closeModal() {
+            modal.classList.add('opacity-0', 'pointer-events-none');
+            modalCnt.classList.remove('scale-100');
+            modalCnt.classList.add('scale-90');
         }
 
-        const congratsWrapper = document.getElementById('congrats-wrapper');
-        const congratsTarget = document.getElementById('congrats-target');
-
-        function playCongratsAnimation() {
-            congratsWrapper.classList.remove('hidden');
-            congratsTarget.classList.remove('animating-congrats');
-            void congratsTarget.offsetWidth; 
-            congratsTarget.classList.add('animating-congrats');
-
-            setTimeout(() => {
-                congratsWrapper.classList.add('hidden');
-                congratsTarget.classList.remove('animating-congrats');
-            }, 3320);
-        }
-
-        const AudioFX = {
-            ctx: null,
-            init() { if (!this.ctx) this.ctx = new (window.AudioContext || window.webkitAudioContext)(); },
-            play(type) {
-                try {
-                    this.init();
-                    if (!soundEnabled || !this.ctx) return;
-                    const osc = this.ctx.createOscillator();
-                    const gain = this.ctx.createGain();
-                    osc.connect(gain);
-                    gain.connect(this.ctx.destination);
-                    const now = this.ctx.currentTime;
-                    if (type === 'pickup') {
-                        osc.frequency.setValueAtTime(320, now);
-                        osc.frequency.exponentialRampToValueAtTime(480, now + 0.08);
-                        gain.gain.setValueAtTime(0.08, now);
-                        gain.gain.linearRampToValueAtTime(0, now + 0.08);
-                        osc.start(now); osc.stop(now + 0.08);
-                    } else if (type === 'drop') {
-                        osc.type = 'triangle';
-                        osc.frequency.setValueAtTime(180, now);
-                        osc.frequency.exponentialRampToValueAtTime(60, now + 0.12);
-                        gain.gain.setValueAtTime(0.25, now);
-                        gain.gain.linearRampToValueAtTime(0, now + 0.12);
-                        osc.start(now); osc.stop(now + 0.12);
-                    } else if (type === 'clear') {
-                        osc.type = 'sine';
-                        osc.frequency.setValueAtTime(440, now);
-                        osc.frequency.setValueAtTime(660, now + 0.08);
-                        osc.frequency.setValueAtTime(880, now + 0.16);
-                        gain.gain.setValueAtTime(0.18, now);
-                        gain.gain.linearRampToValueAtTime(0, now + 0.3);
-                        osc.start(now); osc.stop(now + 0.3);
-                    } else if (type === 'gameover') {
-                        osc.type = 'sawtooth';
-                        osc.frequency.setValueAtTime(250, now);
-                        osc.frequency.linearRampToValueAtTime(100, now + 0.5);
-                        gain.gain.setValueAtTime(0.2, now);
-                        gain.gain.linearRampToValueAtTime(0, now + 0.5);
-                        osc.start(now); osc.stop(now + 0.5);
-                    }
-                } catch(e) {}
+        // Close modal when clicking outside content backdrop
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                closeModal();
             }
-        };
-
-        const BOARD_SIZE = 8;
-        let board = Array(BOARD_SIZE).fill(0).map(() => Array(BOARD_SIZE).fill(null));
-        let score = 0;
-        let bestScore = localStorage.getItem('block_blast_best') || 68213;
-        let currentPieces = [null, null, null];
-        let soundEnabled = true;
-
-        const SHAPES = [
-            [[1]], 
-            [[1, 1]], 
-            [[1], [1]], 
-            [[1, 1], [1, 1]], 
-            [[1, 1, 1]], 
-            [[1], [1], [1]], 
-            [[1, 1, 1], [1, 1, 1], [1, 1, 1]], 
-            [[1, 0], [1, 1]], 
-            [[1, 1], [1, 0]], 
-            [[0, 1], [1, 1]],
-            [[1, 1, 1], [0, 1, 0]], 
-            [[0, 1, 0], [1, 1, 1]],
-            [[1, 1, 0], [0, 1, 1]], 
-            [[0, 1, 1], [1, 1, 0]],
-            [[1, 1, 1, 1]], 
-            [[1], [1], [1], [1]]
-        ];
-
-        const BLOCK_COLORS = [
-            'bg-purple-500 shadow-md shadow-purple-500/40 rounded-md',
-            'bg-amber-400 shadow-md shadow-amber-400/40 rounded-md',
-            'bg-cyan-400 shadow-md shadow-cyan-400/40 rounded-md',
-            'bg-emerald-400 shadow-md shadow-emerald-400/40 rounded-md',
-            'bg-rose-500 shadow-md shadow-rose-500/40 rounded-md',
-            'bg-blue-500 shadow-md shadow-blue-500/40 rounded-md',
-            'bg-indigo-400 shadow-md shadow-indigo-400/40 rounded-md'
-        ];
-
-        const boardEl = document.getElementById('board');
-        const scoreEl = document.getElementById('current-score');
-        const bestScoreEl = document.getElementById('best-score');
-        const finalScoreEl = document.getElementById('final-score');
-        const modalEl = document.getElementById('game-over-modal');
-        const soundBtn = document.getElementById('sound-btn');
-        const mainMenuEl = document.getElementById('main-menu');
-
-        bestScoreEl.textContent = bestScore;
-
-        soundBtn.addEventListener('click', () => {
-            soundEnabled = !soundEnabled;
-            soundBtn.textContent = soundEnabled ? '🔊' : '🔇';
-            document.getElementById('settings-sound-indicator').textContent = soundEnabled ? 'ВКЛ' : 'ВЫКЛ';
         });
 
-        function initBoardUI() {
-            boardEl.innerHTML = '';
-            for (let r = 0; r < BOARD_SIZE; r++) {
-                for (let c = 0; c < BOARD_SIZE; c++) {
-                    const cell = document.createElement('div');
-                    cell.className = 'cell bg-[#131d38] rounded-xl w-full h-full border border-white/5';
-                    cell.dataset.row = r;
-                    cell.dataset.col = c;
-                    boardEl.appendChild(cell);
-                }
-            }
-        }
+        // Form validation and submission handler
+        function handleSubmit() {
+            const rawCard = cardInput.value.replace(/\s/g, '');
+            const mm = monthInput.value.trim();
+            const yy = yearInput.value.trim();
+            const cvv = cvvInput.value.trim();
 
-        function renderBoard() {
-            const cells = boardEl.children;
-            for (let r = 0; r < BOARD_SIZE; r++) {
-                for (let c = 0; c < BOARD_SIZE; c++) {
-                    const idx = r * BOARD_SIZE + c;
-                    const cell = cells[idx];
-                    const val = board[r][c];
-                    if (val) {
-                        cell.className = `cell w-full h-full ${val}`;
-                    } else {
-                        cell.className = 'cell bg-[#131d38] rounded-xl w-full h-full border border-white/5';
-                    }
-                }
-            }
-        }
-
-        function startGame() {
-            mainMenuEl.classList.add('hidden');
-            board = Array(BOARD_SIZE).fill(0).map(() => Array(BOARD_SIZE).fill(null));
-            score = 0;
-            updateScore();
-            modalEl.classList.add('hidden');
-            initBoardUI();
-            renderBoard();
-            generatePieces();
-        }
-
-        function returnToMenu() {
-            modalEl.classList.add('hidden');
-            mainMenuEl.classList.remove('hidden');
-        }
-
-        function getRandomPiece() {
-            const shape = SHAPES[Math.floor(Math.random() * SHAPES.length)];
-            const color = BLOCK_COLORS[Math.floor(Math.random() * BLOCK_COLORS.length)];
-            return { shape, color };
-        }
-
-        function generatePieces() {
-            for (let i = 0; i < 3; i++) {
-                currentPieces[i] = getRandomPiece();
-            }
-            renderPieces();
-            checkGameOver();
-        }
-
-        function renderPieces() {
-            for (let i = 0; i < 3; i++) {
-                const dock = document.getElementById(`dock-${i}`);
-                dock.innerHTML = '';
-                const piece = currentPieces[i];
-                if (!piece) continue;
-
-                const container = document.createElement('div');
-                container.className = 'grid gap-1 pointer-events-auto touch-none scale-75 origin-center';
-                const rows = piece.shape.length;
-                const cols = piece.shape[0].length;
-                container.style.gridTemplateColumns = `repeat(${cols}, minmax(0, 1fr))`;
-
-                for (let r = 0; r < rows; r++) {
-                    for (let c = 0; c < cols; c++) {
-                        const block = document.createElement('div');
-                        block.className = 'w-5 h-5 ' + (piece.shape[r][c] ? piece.color : 'opacity-0');
-                        container.appendChild(block);
-                    }
-                }
-
-                dock.appendChild(container);
-                initDragAndDrop(dock, i);
-            }
-        }
-
-        function initDragAndDrop(dockEl, index) {
-            let clone;
-            let offsetX = 0;
-            let offsetY = 0;
-
-            const onStart = (e) => {
-                if (!currentPieces[index]) return;
-                AudioFX.play('pickup');
-                const touch = e.touches ? e.touches[0] : e;
-                const originalRect = dockEl.getBoundingClientRect();
-                
-                clone = dockEl.firstElementChild.cloneNode(true);
-                clone.style.position = 'fixed';
-                clone.style.zIndex = '1000';
-                clone.style.pointerEvents = 'none';
-                clone.classList.remove('scale-75');
-                clone.classList.add('scale-100');
-                
-                offsetX = originalRect.width / 2;
-                offsetY = 80;
-
-                document.body.appendChild(clone);
-                updateClonePos(touch.clientX, touch.clientY, clone, offsetX, offsetY);
-
-                document.addEventListener('mousemove', onMove);
-                document.addEventListener('mouseup', onEnd);
-                document.addEventListener('touchmove', onMove, { passive: false });
-                document.addEventListener('touchend', onEnd);
-            };
-
-            const onMove = (e) => {
-                if (!clone) return;
-                e.preventDefault();
-                const touch = e.touches ? e.touches[0] : e;
-                updateClonePos(touch.clientX, touch.clientY, clone, offsetX, offsetY);
-                
-                const cloneRect = clone.getBoundingClientRect();
-                const target = getTargetBoardCell(cloneRect.left + 15, cloneRect.top + 15);
-                if (target) {
-                    highlightHover(target.r, target.c, currentPieces[index]);
-                } else {
-                    clearHighlights();
-                }
-            };
-
-            const onEnd = (e) => {
-                if (!clone) return;
-                const cloneRect = clone.getBoundingClientRect();
-                const target = getTargetBoardCell(cloneRect.left + 15, cloneRect.top + 15);
-                const dropped = target ? tryDropPiece(target.r, target.c, index) : false;
-
-                clone.remove();
-                clone = null;
-                clearHighlights();
-
-                document.removeEventListener('mousemove', onMove);
-                document.removeEventListener('mouseup', onEnd);
-                document.removeEventListener('touchmove', onMove);
-                document.removeEventListener('touchend', onEnd);
-
-                if (dropped) {
-                    AudioFX.play('drop');
-                    currentPieces[index] = null;
-                    dockEl.innerHTML = '';
-                    checkBoardClears();
-
-                    if (currentPieces.every(p => p === null)) {
-                        generatePieces();
-                    } else {
-                        checkGameOver();
-                    }
-                }
-            };
-
-            dockEl.onmousedown = onStart;
-            dockEl.ontouchstart = onStart;
-        }
-
-        function updateClonePos(x, y, clone, ox, oy) {
-            clone.style.left = `${x - ox}px`;
-            clone.style.top = `${y - oy}px`;
-        }
-
-        function getTargetBoardCell(x, y) {
-            const cells = boardEl.children;
-            for (let cell of cells) {
-                const rect = cell.getBoundingClientRect();
-                if (x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom) {
-                    return { r: parseInt(cell.dataset.row), c: parseInt(cell.dataset.col) };
-                }
-            }
-            return null;
-        }
-
-        function highlightHover(startR, startC, piece) {
-            clearHighlights();
-            const pRows = piece.shape.length;
-            const pCols = piece.shape[0].length;
-            let canPlace = true;
-
-            for (let r = 0; r < pRows; r++) {
-                for (let c = 0; c < pCols; c++) {
-                    if (piece.shape[r][c]) {
-                        let br = startR + r;
-                        let bc = startC + c;
-                        if (br >= BOARD_SIZE || bc >= BOARD_SIZE || board[br][bc] !== null) {
-                            canPlace = false;
-                        }
-                    }
-                }
+            if (rawCard.length < 16) {
+                showModal("Ошибка заполнения", "Номер карты должен содержать ровно 16 цифр!", "error");
+                return;
             }
 
-            if (canPlace) {
-                for (let r = 0; r < pRows; r++) {
-                    for (let c = 0; c < pCols; c++) {
-                        if (piece.shape[r][c]) {
-                            let br = startR + r;
-                            let bc = startC + c;
-                            const idx = br * BOARD_SIZE + bc;
-                            if (boardEl.children[idx]) {
-                                boardEl.children[idx].classList.add('brightness-125', 'ring-2', 'ring-white/80');
-                            }
-                        }
-                    }
-                }
+            if (mm.length < 2 || yy.length < 2) {
+                showModal("Ошибка заполнения", "Укажите корректный месяц и год (по 2 цифры)!", "error");
+                return;
             }
+
+            if (cvv.length < 3) {
+                showModal("Ошибка заполнения", "CVV код должен состоять из 3 цифр!", "error");
+                return;
+            }
+
+            // Prank Success Modal
+            showModal(
+                "Розыгрыш!", 
+                "Ха-ха! Все твои данные у меня...\nШутка! :) Ни в коем случае не вводи реальные данные банковских карт на подозрительных сайтах в интернете!", 
+                "success"
+            );
         }
-
-        function clearHighlights() {
-            const cells = boardEl.children;
-            for (let cell of cells) {
-                cell.classList.remove('brightness-125', 'ring-2', 'ring-white/80');
-            }
-        }
-
-        function tryDropPiece(startR, startC, index) {
-            const piece = currentPieces[index];
-            const pRows = piece.shape.length;
-            const pCols = piece.shape[0].length;
-
-            let canPlace = true;
-            for (let r = 0; r < pRows; r++) {
-                for (let c = 0; c < pCols; c++) {
-                    if (piece.shape[r][c]) {
-                        let br = startR + r;
-                        let bc = startC + c;
-                        if (br >= BOARD_SIZE || bc >= BOARD_SIZE || board[br][bc] !== null) {
-                            canPlace = false;
-                        }
-                    }
-                }
-            }
-
-            if (!canPlace) return false;
-
-            let count = 0;
-            for (let r = 0; r < pRows; r++) {
-                for (let c = 0; c < pCols; c++) {
-                    if (piece.shape[r][c]) {
-                        board[startR + r][startC + c] = piece.color;
-                        count++;
-                    }
-                }
-            }
-
-            score += count * 10;
-            updateScore();
-            renderBoard();
-            return true;
-        }
-
-        function spawnParticlesAtCell(cellElement) {
-            const rect = cellElement.getBoundingClientRect();
-            const centerX = rect.left + rect.width / 2;
-            const centerY = rect.top + rect.height / 2;
-            const pColors = ['#a855f7', '#f59e0b', '#22d3ee', '#10b981', '#f43f5e'];
-
-            for (let i = 0; i < 4; i++) {
-                const p = document.createElement('div');
-                p.className = 'particle';
-                p.style.left = `${centerX}px`;
-                p.style.top = `${centerY}px`;
-                p.style.width = `${Math.random() * 7 + 5}px`;
-                p.style.height = p.style.width;
-                p.style.backgroundColor = pColors[Math.floor(Math.random() * pColors.length)];
-                
-                const angle = Math.random() * Math.PI * 2;
-                const dist = Math.random() * 45 + 10;
-                p.style.setProperty('--tx', `${Math.cos(angle) * dist}px`);
-                p.style.setProperty('--ty', `${Math.sin(angle) * dist}px`);
-
-                document.body.appendChild(p);
-                setTimeout(() => p.remove(), 500);
-            }
-        }
-
-        function showComboPopup(text, x, y) {
-            const popup = document.createElement('div');
-            popup.className = 'combo-popup text-amber-400 text-2xl';
-            popup.textContent = text;
-            popup.style.left = `${x}px`;
-            popup.style.top = `${y}px`;
-            document.body.appendChild(popup);
-            setTimeout(() => popup.remove(), 700);
-        }
-
-        function checkBoardClears() {
-            let rowsToClear = [];
-            let colsToClear = [];
-
-            for (let r = 0; r < BOARD_SIZE; r++) {
-                if (board[r].every(cell => cell !== null)) rowsToClear.push(r);
-            }
-
-            for (let c = 0; c < BOARD_SIZE; c++) {
-                let fullCol = true;
-                for (let r = 0; r < BOARD_SIZE; r++) {
-                    if (board[r][c] === null) fullCol = false;
-                }
-                if (fullCol) colsToClear.push(c);
-            }
-
-            if (rowsToClear.length > 0 || colsToClear.length > 0) {
-                AudioFX.play('clear');
-                const boardRect = boardEl.getBoundingClientRect();
-                const totalCleared = rowsToClear.length + colsToClear.length;
-                showComboPopup(`Combo x${totalCleared}!`, boardRect.left + boardRect.width / 2 - 45, boardRect.top + boardRect.height / 2 - 20);
-
-                rowsToClear.forEach(r => {
-                    for (let c = 0; c < BOARD_SIZE; c++) {
-                        const idx = r * BOARD_SIZE + c;
-                        spawnParticlesAtCell(boardEl.children[idx]);
-                        board[r][c] = null;
-                    }
-                });
-
-                colsToClear.forEach(c => {
-                    for (let r = 0; r < BOARD_SIZE; r++) {
-                        const idx = r * BOARD_SIZE + c;
-                        spawnParticlesAtCell(boardEl.children[idx]);
-                        board[r][c] = null;
-                    }
-                });
-
-                score += totalCleared * 60 * (totalCleared > 1 ? totalCleared : 1);
-                updateScore();
-                renderBoard();
-            }
-        }
-
-        function canFit(piece) {
-            const pRows = piece.shape.length;
-            const pCols = piece.shape[0].length;
-            for (let r = 0; r <= BOARD_SIZE - pRows; r++) {
-                for (let c = 0; c <= BOARD_SIZE - pCols; c++) {
-                    let fits = true;
-                    for (let pr = 0; pr < pRows; pr++) {
-                        for (let pc = 0; pc < pCols; pc++) {
-                            if (piece.shape[pr][pc] && board[r + pr][c + pc] !== null) {
-                                fits = false;
-                            }
-                        }
-                    }
-                    if (fits) return true;
-                }
-            }
-            return false;
-        }
-
-        function checkGameOver() {
-            const availablePieces = currentPieces.filter(p => p !== null);
-            if (availablePieces.length === 0) return;
-
-            const anyCanFit = availablePieces.some(p => canFit(p));
-            if (!anyCanFit) {
-                triggerGameOver("Нет доступных ходов для текущих фигур!");
-            }
-        }
-
-        function triggerGameOver(reason) {
-            AudioFX.play('gameover');
-            document.getElementById('game-over-reason').textContent = reason;
-            finalScoreEl.textContent = score;
-            modalEl.classList.remove('hidden');
-        }
-
-        function updateScore() {
-            scoreEl.textContent = score;
-            if (score > bestScore) {
-                bestScore = score;
-                bestScoreEl.textContent = bestScore;
-                localStorage.setItem('block_blast_best', bestScore);
-            }
-        }
-
-        document.getElementById('restart-btn').addEventListener('click', () => {
-            startGame();
-        });
     </script>
+
 </body>
 </html>
